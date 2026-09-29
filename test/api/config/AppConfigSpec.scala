@@ -1,0 +1,414 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package api.config
+
+import api.config.Deprecation.{Deprecated, NotDeprecated}
+import api.routing.Version1
+import api.utils.UnitSpec
+import cats.data.Validated
+import cats.data.Validated.{Invalid, Valid}
+import com.typesafe.config.ConfigFactory
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import java.time.LocalDate
+
+class AppConfigSpec extends UnitSpec {
+
+  private val simpleAppConfig = appConfig(versionConf = "")
+
+  "AppConfig" should {
+    "return the API name" in {
+      val result = simpleAppConfig.appName
+      result shouldBe "supplementary-information-api"
+    }
+
+    "return the MTD ID base URL" in {
+      val result = simpleAppConfig.mtdIdBaseUrl
+      result shouldBe "http://localhost:9769"
+    }
+
+    "return the HIP config" in {
+      val expectedHipEnvHeaders = Some(
+        List(
+          "HIP-Accept",
+          "HIP-Gov-Test-Scenario",
+          "HIP-Location"
+        ))
+
+      simpleAppConfig.hipDownstreamConfig shouldBe BasicAuthDownstreamConfig(
+        "http://127.0.0.1:9772",
+        "Prod",
+        "HIP-ClientId",
+        "HIP-ClientSecret",
+        expectedHipEnvHeaders
+      )
+    }
+
+    "return the apiDocumentationUrl" when {
+      "it is not specified" in {
+        val changedAppConfig = appConfig("", None)
+        changedAppConfig.apiDocumentationUrl shouldBe s"https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/${changedAppConfig.appName}"
+      }
+      "it is specified" in {
+        val changedAppConfig = appConfig("", Some("test123"))
+        changedAppConfig.apiDocumentationUrl shouldBe "test123"
+      }
+    }
+  }
+
+  "endpointsEnabled" when {
+    "the API version is disabled" should {
+      "return false" in {
+        val appConfigWithDisabledVersion = appConfig(
+          """
+            |    1.0 {
+            |      status = "RETIRED"
+            |      endpoints {
+            |        enabled = false
+            |        api-released-in-production = false
+            |      }
+            |    }
+            |""".stripMargin
+        )
+
+        val result = appConfigWithDisabledVersion.endpointsEnabled("1.0")
+        result shouldBe false
+      }
+    }
+
+    "the API version is enabled" should {
+      "return true" in {
+        val appConfigWithEnabledVersion = appConfig(
+          """
+            |    1.0 {
+            |      status = "BETA"
+            |      endpoints {
+            |        enabled = true
+            |        api-released-in-production = true
+            |
+            |        released-in-production {
+            |          create-something: true
+            |          amend-something: false
+            |        }
+            |      }
+            |    }
+            |
+            |""".stripMargin
+        )
+        val result = appConfigWithEnabledVersion.endpointsEnabled("1.0")
+        result shouldBe true
+      }
+    }
+  }
+
+  "endpointReleasedInProduction" when {
+    "the API version is enabled and the config specifies the endpoint status as true" should {
+      "return true" in {
+        val appConfigWithReleasedVersion = appConfig(
+          """
+            |    1.0 {
+            |      status = "BETA"
+            |      endpoints {
+            |        enabled = true
+            |        api-released-in-production = true
+            |
+            |        released-in-production {
+            |          create-something: true
+            |          amend-something: false
+            |        }
+            |      }
+            |    }
+            |""".stripMargin
+        )
+        val result = appConfigWithReleasedVersion.endpointReleasedInProduction("1.0", "create-something")
+        result shouldBe true
+      }
+    }
+
+    "the API version is enabled and the config specifies the endpoint status as false" should {
+      "return true" in {
+        val appConfigWithDisabledEndpoint = appConfig(
+          """
+            |    1.0 {
+            |      status = "BETA"
+            |      endpoints {
+            |        enabled = true
+            |        api-released-in-production = true
+            |
+            |        released-in-production {
+            |          create-something: true
+            |          amend-something: false
+            |        }
+            |      }
+            |    }
+            |""".stripMargin
+        )
+        val result = appConfigWithDisabledEndpoint.endpointReleasedInProduction("1.0", "amend-something")
+        result shouldBe false
+      }
+    }
+
+    "the API version is enabled and the config doesn't specify the endpoint status" should {
+      "return the value of endpointReleasedInProduction" in {
+        val appConfigWithUnspecifiedEndpointStatus = appConfig(
+          """
+            |    1.0 {
+            |      status = "BETA"
+            |      endpoints {
+            |        enabled = true
+            |        api-released-in-production = true
+            |
+            |        released-in-production {
+            |          create-something: true
+            |          amend-something: false
+            |        }
+            |      }
+            |    }
+            |
+            |""".stripMargin
+        )
+        val result = appConfigWithUnspecifiedEndpointStatus.endpointReleasedInProduction("1.0", "delete-something")
+        result shouldBe true
+      }
+    }
+  }
+
+  "deprecationFor" when {
+    "the API version is not deprecated" should {
+      "return NotDeprecated" in {
+        val config: AppConfig = appConfig(
+          """
+            |    1.0 {
+            |      status = "BETA"
+            |      endpoints {
+            |        enabled = true
+            |        api-released-in-production = true
+            |      }
+            |    }
+            """.stripMargin
+        )
+
+        config.deprecationFor(Version1) shouldBe Valid(NotDeprecated)
+      }
+    }
+
+    "the API version is deprecated" when {
+      "deprecatedOn is missing" should {
+        "return the expected message" in {
+          val config: AppConfig = appConfig(
+            """
+              |    1.0 {
+              |      status = "DEPRECATED"
+              |      endpoints {
+              |        enabled = true
+              |        api-released-in-production = true
+              |      }
+              |    }
+                 """.stripMargin
+          )
+
+          val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+          result shouldBe Invalid("deprecatedOn date is required for a deprecated version 1.0")
+        }
+      }
+
+      "deprecatedOn exists" when {
+        "sunsetEnabled is true (default)" when {
+          "sunsetDate is provided" should {
+            "return Deprecated with supplied sunsetDate" in {
+              val config: AppConfig = appConfig(
+                """
+                  |    1.0 {
+                  |      status = "DEPRECATED"
+                  |      deprecatedOn = "2024-01-15"
+                  |      sunsetDate = "2025-01-15"
+                  |      endpoints {
+                  |        enabled = true
+                  |        api-released-in-production = true
+                  |      }
+                  |    }
+                  """.stripMargin
+              )
+
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+              result shouldBe Valid(
+                Deprecated(
+                  deprecatedOn = LocalDate.parse("2024-01-15").plusDays(1).atStartOfDay.minusSeconds(1),
+                  sunsetDate = Some(LocalDate.parse("2025-01-15").plusDays(1).atStartOfDay.minusSeconds(1))
+                )
+              )
+            }
+          }
+
+          "sunsetDate is not provided" should {
+            "return Deprecated with default sunsetDate (+6 months)" in {
+              val config: AppConfig = appConfig(
+                """
+                  |    1.0 {
+                  |      status = "DEPRECATED"
+                  |      deprecatedOn = "2024-01-15"
+                  |      endpoints {
+                  |        enabled = true
+                  |        api-released-in-production = true
+                  |      }
+                  |    }
+                  """.stripMargin
+              )
+
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+              result shouldBe Valid(
+                Deprecated(
+                  deprecatedOn = LocalDate.parse("2024-01-15").plusDays(1).atStartOfDay.minusSeconds(1),
+                  sunsetDate = Some(LocalDate.parse("2024-01-15").plusMonths(6).plusDays(1).atStartOfDay.minusSeconds(1))
+                )
+              )
+            }
+          }
+        }
+
+        "sunsetEnabled is false" when {
+          "sunsetDate is provided" should {
+            "return Deprecated without the supplied sunsetDate" in {
+              val config: AppConfig = appConfig(
+                """
+                  |    1.0 {
+                  |      status = "DEPRECATED"
+                  |      deprecatedOn = "2024-01-15"
+                  |      sunsetDate = "2025-01-15"
+                  |      sunsetEnabled = false
+                  |      endpoints {
+                  |        enabled = true
+                  |        api-released-in-production = true
+                  |      }
+                  |    }
+                  """.stripMargin
+              )
+
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+              result shouldBe Valid(
+                Deprecated(
+                  deprecatedOn = LocalDate.parse("2024-01-15").plusDays(1).atStartOfDay.minusSeconds(1),
+                  sunsetDate = None
+                )
+              )
+            }
+          }
+
+          "sunsetDate is not provided" should {
+            "return Deprecated with no sunsetDate" in {
+              val config: AppConfig = appConfig(
+                """
+                  |    1.0 {
+                  |      status = "DEPRECATED"
+                  |      deprecatedOn = "2024-01-15"
+                  |      sunsetEnabled = false
+                  |      endpoints {
+                  |        enabled = true
+                  |        api-released-in-production = true
+                  |      }
+                  |    }
+                  """.stripMargin
+              )
+
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+              result shouldBe Valid(
+                Deprecated(
+                  deprecatedOn = LocalDate.parse("2024-01-15").plusDays(1).atStartOfDay.minusSeconds(1),
+                  sunsetDate = None
+                )
+              )
+            }
+          }
+        }
+
+        "sunsetDate is before deprecatedOn" should {
+          "return the expected message" in {
+            val config: AppConfig = appConfig(
+              """
+                |    1.0 {
+                |      status = "DEPRECATED"
+                |      deprecatedOn = "2024-01-15"
+                |      sunsetDate = "2023-12-31"
+                |      endpoints {
+                |        enabled = true
+                |        api-released-in-production = true
+                |      }
+                |    }
+                """.stripMargin
+            )
+
+            val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+
+            result shouldBe Invalid("sunsetDate must be later than deprecatedOn date for a deprecated version 1.0")
+          }
+        }
+      }
+    }
+  }
+
+  private def appConfig(versionConf: String, apiDocumentationUrl: Option[String] = None): AppConfig = {
+    val conf = ConfigFactory.parseString(
+      s"""
+         |  appName = "supplementary-information-api"
+         |  appUrl = "http://localhost:7759"
+         |  
+         |  api {
+         |   controlled-access.enabled = true
+         |""".stripMargin ++
+
+        versionConf ++
+
+        s"""
+           |${apiDocumentationUrl match {
+            case Some(url) => s"documentation-url = $url"
+            case _         => ""
+          }}
+           |  }
+           |
+           |  
+           |  microservice {
+           |    services {
+           |      mtd-id-lookup {
+           |        host = localhost
+           |        port = 9769
+           |      }
+           |
+           |      hip {
+           |        host = 127.0.0.1
+           |        port = 9772
+           |        env = Prod
+           |        clientId = "HIP-ClientId"
+           |        clientSecret = "HIP-ClientSecret"
+           |        environmentHeaders = ["HIP-Accept", "HIP-Gov-Test-Scenario", "HIP-Location"]
+           |      }
+           |    }
+           |  }
+           |""".stripMargin
+    )
+
+    val configuration  = Configuration(conf)
+    val servicesConfig = new ServicesConfig(configuration)
+    new AppConfig(servicesConfig, configuration)
+  }
+
+}
