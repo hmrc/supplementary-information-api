@@ -1,0 +1,5 @@
+get:
+  $ref: "./hello_world_retrieve.yaml"
+  security:
+    - User-Restricted:
+        - read:self-assessment
