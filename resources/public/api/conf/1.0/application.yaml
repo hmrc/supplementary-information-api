@@ -54,4 +54,4 @@ tags:
 
 paths:
   /individuals/supplementary-information/hello-world:
-    $ref: "./supplementary_information.yaml"
+    $ref: "./hello_world_retrieve.yaml"
