@@ -20,7 +20,7 @@ Run the microservice from the console using: `sbt run` (starts on port 7759 by d
 Start the service manager profile:
 
 ```bash
-sm2 -start MTDFB_SUPPLEMENTARY_INFORMATION_API
+sm2 -start MTDFB_SUPPLEMENTARY_INFORMATION
 ```
 
 ## Running Tests
