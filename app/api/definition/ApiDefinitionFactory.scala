@@ -30,7 +30,7 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
   lazy val definition: Definition =
     Definition(
       api = APIDefinition(
-        name = "Supplementary Information (MTD)",
+        name = "Supplementary Information API (MTD)",
         description = "An API for providing Supplementary Information data",
         context = appConfig.apiGatewayContext,
         categories = Seq("INCOME_TAX_MTD"),

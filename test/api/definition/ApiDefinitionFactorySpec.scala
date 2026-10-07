@@ -45,7 +45,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         apiDefinitionFactory.definition shouldBe
           Definition(
             api = APIDefinition(
-              name = "Supplementary Information (MTD)",
+              name = "Supplementary Information API (MTD)",
               description = "An API for providing Supplementary Information data",
               context = "individuals/supplementary-information",
               categories = Seq("INCOME_TAX_MTD"),
