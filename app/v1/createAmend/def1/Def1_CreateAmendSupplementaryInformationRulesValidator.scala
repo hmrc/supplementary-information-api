@@ -24,7 +24,7 @@ import v1.createAmend.def1.model.request.*
 
 object Def1_CreateAmendSupplementaryInformationRulesValidator extends RulesValidator[Def1_CreateAmendSupplementaryInformationRequestData] {
 
-  private val supplementaryInformationRegex = """^[A-Za-z0-9 &'"()*,\\\-./@£]{1,4000}$""".r
+  private val supplementaryInformationRegex = """^[A-Za-z0-9 &'"()*,\-./@£]{1,4000}$""".r
 
   private val resolveSupplementaryInformation =
     ResolveStringPattern(supplementaryInformationRegex, FormatSupplementaryInformation)
