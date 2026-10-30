@@ -43,8 +43,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
   "Calling the Create or Amend Supplementary Information endpoint" should {
     "return a 204 status code" when {
       "any valid request is made with a supported tax year" in new Test {
-        override val taxYear: String       = parsedTaxYear.asMtd
-        override def downstreamUri: String = s"/itsd/white-space/$nino?taxYear=${parsedTaxYear.asTysDownstream}"
+        override val taxYear: String = parsedTaxYear.asMtd
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -53,6 +52,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
           DownstreamStub.onSuccess(
             method = DownstreamStub.PUT,
             uri = downstreamUri,
+            queryParams = queryParams,
             status = NO_CONTENT,
             body = JsObject.empty
           )
@@ -95,8 +95,8 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
           ("AA123456A", "invalid", requestBodyJson, BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2025-27", requestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "2025-26", requestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2026-27", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
-          ("AA123456A", "2026-27", invalidSupplementaryInformationJson, BAD_REQUEST, FormatSupplementaryInformation)
+          ("AA123456A", "2026-27", invalidSupplementaryInformationJson, BAD_REQUEST, FormatSupplementaryInformation),
+          ("AA123456A", "2026-27", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
         input.foreach(validationErrorTest.tupled)
@@ -112,6 +112,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
             DownstreamStub.onError(
               method = DownstreamStub.PUT,
               uri = downstreamUri,
+              queryParams = queryParams,
               errorStatus = downstreamStatus,
               errorBody = errorBody(downstreamCode)
             )
@@ -126,16 +127,12 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
       }
 
       val errors = List(
-        (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-        (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-        (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
-        (BAD_REQUEST, "INVALID_PAYLOAD", INTERNAL_SERVER_ERROR, InternalError),
+        (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+        (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+        (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+        (BAD_REQUEST, "1000", INTERNAL_SERVER_ERROR, InternalError),
         (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
-        (UNPROCESSABLE_ENTITY, "INVALID_SUBMISSION", BAD_REQUEST, RuleTaxYearNotEndedError),
-        (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", INTERNAL_SERVER_ERROR, InternalError),
-        (UNPROCESSABLE_ENTITY, "OUTSIDE_AMENDMENT_WINDOW", BAD_REQUEST, RuleOutsideAmendmentWindowError),
-        (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-        (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+        (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError)
       )
 
       errors.foreach(serviceErrorTest.tupled)
@@ -161,7 +158,9 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
         )
     }
 
-    def downstreamUri: String = s"/itsd/white-space/$nino?taxYear=${parsedTaxYear.asTysDownstream}"
+    def downstreamUri: String = s"/itsd/white-space/$nino"
+
+    val queryParams: Map[String, String] = Map("taxYear" -> parsedTaxYear.asTysDownstream)
 
     def errorBody(code: String): String =
       s"""
