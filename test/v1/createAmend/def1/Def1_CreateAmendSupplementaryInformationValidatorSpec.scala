@@ -114,7 +114,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
         description in {
           val validJson: JsValue = requestBodyJson.update("/supplementaryInformation", JsString(value))
 
-          validate(body = validJson) shouldBe error(FormatSupplementaryInformation)
+          validate(body = validJson) shouldBe error(FormatSupplementaryInformationError)
         }
       }
     }
