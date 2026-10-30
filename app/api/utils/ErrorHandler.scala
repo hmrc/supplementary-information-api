@@ -48,11 +48,13 @@ class ErrorHandler @Inject() (
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
+    val newMessage = if (message.isEmpty) "EMPTY" else message
+
     logger.warn(
       message = s"[ErrorHandler][onClientError] error in version " +
         s"${versionIfSpecified(request)}, " +
         s"for (${request.method}) [${request.uri}] with status: " +
-        s" $statusCode and message: $message")
+        s" $statusCode and message hello: $newMessage")
 
     statusCode match {
 

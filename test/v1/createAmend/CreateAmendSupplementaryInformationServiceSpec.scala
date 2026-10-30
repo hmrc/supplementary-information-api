@@ -21,7 +21,7 @@ import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.*
-import v1.createAmend.def1.model.request.Def1_CreateAmendTaxLiabilityAdjustmentsRequestData
+import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.Future
 
@@ -33,47 +33,44 @@ class CreateAmendSupplementaryInformationServiceSpec extends ServiceSpec {
     requestBodyModel
   )
 
-  "CreateAmendTaxLiabilityAdjustmentsService" should {
+  "CreateAmendSupplementaryInformationService" should {
     "return a success response" when {
       "using schema Def1" in new Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
-        MockCreateAmendTaxLiabilityAdjustmentsConnector
-          .createAmendTaxLiabilityAdjustments(requestData)
+        MockCreateAmendSupplementaryInformationConnector
+          .createAmendSupplementaryInformation(requestData)
           .returns(Future.successful(outcome))
-        await(service.createAmendTaxLiabilityAdjustments(requestData)) shouldBe outcome
+        await(service.createAmendSupplementaryInformation(requestData)) shouldBe outcome
       }
     }
 
     "map errors according to spec" when {
       def serviceError(downStreamErrorCode: String, error: MtdError): Unit =
         s"a $downStreamErrorCode error is returned from the service" in new Test {
-          MockCreateAmendTaxLiabilityAdjustmentsConnector
-            .createAmendTaxLiabilityAdjustments(requestData)
+          MockCreateAmendSupplementaryInformationConnector
+            .createAmendSupplementaryInformation(requestData)
             .returns(
               Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downStreamErrorCode)))))
             )
 
-          await(service.createAmendTaxLiabilityAdjustments(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+          await(service.createAmendSupplementaryInformation(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val errorMap = List(
-        "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-        "INVALID_CORRELATION_ID"    -> InternalError,
-        "INVALID_PAYLOAD"           -> InternalError,
-        "INVALID_SUBMISSION"        -> RuleTaxYearNotEndedError,
-        "TAX_YEAR_NOT_SUPPORTED"    -> InternalError,
-        "OUTSIDE_AMENDMENT_WINDOW"  -> RuleOutsideAmendmentWindowError,
-        "SERVER_ERROR"              -> InternalError,
-        "SERVICE_UNAVAILABLE"       -> InternalError
+        "1215" -> NinoFormatError,
+        "1117" -> TaxYearFormatError,
+        "4200" -> RuleOutsideAmendmentWindowError,
+        "1216" -> InternalError,
+        "1000" -> InternalError,
+        "1285" -> InternalError
       )
 
       errorMap.foreach(args => serviceError.tupled(args))
     }
   }
 
-  trait Test extends MockCreateAmendTaxLiabilityAdjustmentsConnector {
-    val service = new CreateAmendTaxLiabilityAdjustmentsService(mockConnector)
+  trait Test extends MockCreateAmendSupplementaryInformationConnector {
+    val service = new CreateAmendSupplementaryInformationService(mockConnector)
   }
 
 }

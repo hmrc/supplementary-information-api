@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateAmendSupplementaryInformationService @Inject() (connector: CreateAmendSupplementaryInformationConnector) extends BaseService {
 
-  def createAmendTaxLiabilityAdjustments(
+  def createAmendSupplementaryInformation(
       request: CreateAmendSupplementaryInformationRequestData)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
     connector
       .createAmendSupplementaryInformation(request)
