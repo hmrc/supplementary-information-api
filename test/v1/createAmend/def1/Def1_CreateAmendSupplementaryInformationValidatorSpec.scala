@@ -53,7 +53,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
         }
 
         "a valid supplementaryInformation field is supplied" when {
-          val allowedChars   = """&'"()*,\-./@£""".map(char => (char.toString, s"with special char $char"))
+          val allowedChars   = """&'"()*,-./@£""".map(char => (char.toString, s"with special char $char"))
           val allowedLengths = Seq(1, 4000).map(length => ("a" * length, s"with length $length"))
           val alphanumeric = Seq(
             (('a' to 'z').toString, "with lowercase letters"),
@@ -105,7 +105,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
     }
 
     "return FORMAT_SUPPLEMENTARY_INFORMATION" when {
-      val invalidCharSample = ":|%".map(char => (char.toString, s"with special char $char"))
+      val invalidCharSample = """:|%\""".map(char => (char.toString, s"with special char $char"))
       val invalidLengths    = Seq(0, 4001).map(length => ("a" * length, s"with length $length"))
 
       val tests = invalidCharSample ++ invalidLengths
@@ -114,7 +114,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
         description in {
           val validJson: JsValue = requestBodyJson.update("/supplementaryInformation", JsString(value))
 
-          validate(body = validJson) shouldBe error(FormatSupplementaryInformation)
+          validate(body = validJson) shouldBe error(FormatSupplementaryInformationError)
         }
       }
     }

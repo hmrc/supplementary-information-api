@@ -85,7 +85,7 @@ object RuleIncorrectGovTestScenarioError
 
 object RuleOutsideAmendmentWindowError extends MtdError("RULE_OUTSIDE_AMENDMENT_WINDOW", "You are outside the amendment window", BAD_REQUEST)
 
-object FormatSupplementaryInformation
+object FormatSupplementaryInformationError
     extends MtdError(
       "FORMAT_SUPPLEMENTARY_INFORMATION",
       "The provided supplementaryInformation is invalid",
