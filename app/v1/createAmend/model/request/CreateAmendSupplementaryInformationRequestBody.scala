@@ -16,17 +16,13 @@
 
 package v1.createAmend.model.request
 
-import api.utils.JsonWritesUtil
-import play.api.libs.json.OWrites
-import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestBody
+import play.api.libs.json.{Json, OFormat, OWrites}
 
-trait CreateAmendSupplementaryInformationRequestBody
+case class CreateAmendSupplementaryInformationRequestBody(supplementaryInformation: String)
 
-object CreateAmendSupplementaryInformationRequestBody extends JsonWritesUtil {
+object CreateAmendSupplementaryInformationRequestBody {
 
-  implicit val writes: OWrites[CreateAmendSupplementaryInformationRequestBody] = writesFrom {
-    case def1: Def1_CreateAmendSupplementaryInformationRequestBody =>
-      summon[OWrites[Def1_CreateAmendSupplementaryInformationRequestBody]].writes(def1)
-  }
+  given OFormat[CreateAmendSupplementaryInformationRequestBody] =
+    Json.format[CreateAmendSupplementaryInformationRequestBody]
 
 }

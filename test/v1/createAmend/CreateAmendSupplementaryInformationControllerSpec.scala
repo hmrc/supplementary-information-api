@@ -25,8 +25,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.test.Helpers.PUT
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.*
-import v1.createAmend.def1.model.request.*
+import CreateAmendSupplementaryInformationFixtures.*
 import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -105,7 +104,7 @@ class CreateAmendSupplementaryInformationControllerSpec
       controller.createAmend(validNino, taxYear)(fakeRequest.withBody(Json.toJson(requestBodyModel)).withMethod(PUT))
 
     protected val requestData: CreateAmendSupplementaryInformationRequestData =
-      Def1_CreateAmendSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), requestBodyModel)
+      CreateAmendSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), requestBodyModel)
 
   }
 

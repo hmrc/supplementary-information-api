@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1
+package v1.createAmend
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveNino, ResolveNonEmptyJsonObject}
+import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino, ResolveNonEmptyJsonObject}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.implicits.catsSyntaxTuple2Semigroupal
+import cats.implicits.catsSyntaxTuple3Semigroupal
 import play.api.libs.json.JsValue
-import v1.createAmend.def1.Def1_CreateAmendSupplementaryInformationRulesValidator.validateBusinessRules
-import v1.createAmend.def1.model.request.{Def1_CreateAmendSupplementaryInformationRequestBody, Def1_CreateAmendSupplementaryInformationRequestData}
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmend.CreateAmendSupplementaryInformationRulesValidator.validateBusinessRules
+import v1.createAmend.model.request.{CreateAmendSupplementaryInformationRequestBody, CreateAmendSupplementaryInformationRequestData}
 
 import javax.inject.Inject
 
-class Def1_CreateAmendSupplementaryInformationValidator @Inject() (nino: String, taxYear: String, body: JsValue)
+class CreateAmendSupplementaryInformationValidator @Inject() (nino: String, taxYear: String, body: JsValue)
     extends Validator[CreateAmendSupplementaryInformationRequestData] {
 
-  private lazy val resolveJson = new ResolveNonEmptyJsonObject[Def1_CreateAmendSupplementaryInformationRequestBody]()
+  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
+  private lazy val resolveJson    = new ResolveNonEmptyJsonObject[CreateAmendSupplementaryInformationRequestBody]()
 
   override def validate: Validated[Seq[MtdError], CreateAmendSupplementaryInformationRequestData] =
     (
       ResolveNino(nino),
+      resolveTaxYear.apply(taxYear),
       resolveJson(body)
-    ).mapN { (validNino, validBody) =>
-      Def1_CreateAmendSupplementaryInformationRequestData(
+    ).mapN { (validNino, validTaxYear, validBody) =>
+      CreateAmendSupplementaryInformationRequestData(
         nino = validNino,
-        taxYear = TaxYear.fromMtd(taxYear),
+        taxYear = validTaxYear,
         body = validBody
       )
     } andThen validateBusinessRules

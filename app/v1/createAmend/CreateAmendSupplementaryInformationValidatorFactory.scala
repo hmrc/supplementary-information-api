@@ -17,9 +17,7 @@
 package v1.createAmend
 
 import api.controllers.validators.Validator
-import cats.data.Validated.{Invalid, Valid}
 import play.api.libs.json.JsValue
-import v1.createAmend.def1.Def1_CreateAmendSupplementaryInformationValidator
 import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
 import javax.inject.Singleton
@@ -28,14 +26,7 @@ import javax.inject.Singleton
 class CreateAmendSupplementaryInformationValidatorFactory {
 
   def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAmendSupplementaryInformationRequestData] = {
-    val schema = CreateAmendSupplementaryInformationSchema.schemaFor(taxYear)
-
-    schema match {
-      case Valid(CreateAmendSupplementaryInformationSchema.Def1) =>
-        new Def1_CreateAmendSupplementaryInformationValidator(nino, taxYear, body)
-      case Invalid(errors) =>
-        Validator.returningErrors(errors)
-    }
+    CreateAmendSupplementaryInformationValidator(nino, taxYear, body)
   }
 
 }

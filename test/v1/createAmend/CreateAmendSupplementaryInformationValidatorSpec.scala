@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1
+package v1.createAmend
 
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import play.api.libs.json.*
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.*
-import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestData
+import v1.createAmend.CreateAmendSupplementaryInformationFixtures.*
+import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
-class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with JsonErrorValidators {
+class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with JsonErrorValidators {
 
   private implicit val correlationId: String = "someCorrelationId"
 
@@ -34,18 +34,18 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private def validate(nino: String = validNino, body: JsValue = requestBodyJson) =
-    new Def1_CreateAmendSupplementaryInformationValidator(nino, validTaxYear, body).validateAndWrapResult()
+  private def validate(nino: String = validNino, taxYear: String = validTaxYear, body: JsValue = requestBodyJson) =
+    new CreateAmendSupplementaryInformationValidator(nino, taxYear, body).validateAndWrapResult()
 
   private def error(mtdError: MtdError) = Left(ErrorWrapper(correlationId, mtdError))
 
-  "Def1_CreateAmendSupplementaryInformationValidator" should {
+  "CreateAmendSupplementaryInformationValidator" should {
     "return the parsed object" when {
       "return the parsed object" when {
         "a valid request is supplied" in {
-          validate(validNino, requestBodyJson) shouldBe
+          validate(validNino, validTaxYear, requestBodyJson) shouldBe
             Right(
-              Def1_CreateAmendSupplementaryInformationRequestData(
+              CreateAmendSupplementaryInformationRequestData(
                 parsedNino,
                 parsedTaxYear,
                 requestBodyModel
@@ -69,7 +69,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
               val validJson: JsValue = requestBodyJson.update("/supplementaryInformation", JsString(value))
 
               validate(body = validJson) shouldBe Right(
-                Def1_CreateAmendSupplementaryInformationRequestData(
+                CreateAmendSupplementaryInformationRequestData(
                   parsedNino,
                   parsedTaxYear,
                   requestBodyModel.copy(supplementaryInformation = value)
@@ -83,6 +83,24 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
     "return a NinoFormatError" when {
       "an invalid nino is supplied" in {
         validate(nino = "A12344A") shouldBe error(NinoFormatError)
+      }
+    }
+
+    "return RuleTaxYearNotSupportedError" when {
+      "an unsupported tax year is supplied" in {
+        validate(taxYear = "2025-26") shouldBe error(RuleTaxYearNotSupportedError)
+      }
+    }
+
+    "return TaxYearFormatError" when {
+      "the tax year format is invalid" in {
+        validate(taxYear = "25-26") shouldBe error(TaxYearFormatError)
+      }
+    }
+
+    "return RuleTaxYearRangeInvalidError" when {
+      "the tax year range is invalid" in {
+        validate(taxYear = "2025-27") shouldBe error(RuleTaxYearRangeInvalidError)
       }
     }
 
@@ -104,7 +122,7 @@ class Def1_CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec wit
       }
     }
 
-    "return FORMAT_SUPPLEMENTARY_INFORMATION" when {
+    "return a FormatSupplementaryInformationError" when {
       val invalidCharSample = """:|%\""".map(char => (char.toString, s"with special char $char"))
       val invalidLengths    = Seq(0, 4001).map(length => ("a" * length, s"with length $length"))
 

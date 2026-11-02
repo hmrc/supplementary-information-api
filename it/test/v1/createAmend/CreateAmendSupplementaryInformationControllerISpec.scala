@@ -26,7 +26,7 @@ import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.requestBodyJson
+import CreateAmendSupplementaryInformationFixtures.requestBodyJson
 
 class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBaseSpec {
 

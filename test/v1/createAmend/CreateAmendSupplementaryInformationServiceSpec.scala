@@ -20,28 +20,26 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.*
-import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestData
+import CreateAmendSupplementaryInformationFixtures.*
+import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.Future
 
 class CreateAmendSupplementaryInformationServiceSpec extends ServiceSpec {
 
-  val requestData: Def1_CreateAmendSupplementaryInformationRequestData = Def1_CreateAmendSupplementaryInformationRequestData(
+  val requestData: CreateAmendSupplementaryInformationRequestData = CreateAmendSupplementaryInformationRequestData(
     Nino("AA123456A"),
     TaxYear.fromMtd("2026-27"),
     requestBodyModel
   )
 
   "CreateAmendSupplementaryInformationService" should {
-    "return a success response" when {
-      "using schema Def1" in new Test {
-        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
-        MockCreateAmendSupplementaryInformationConnector
-          .createAmendSupplementaryInformation(requestData)
-          .returns(Future.successful(outcome))
-        await(service.createAmendSupplementaryInformation(requestData)) shouldBe outcome
-      }
+    "return a success response" in new Test {
+      val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
+      MockCreateAmendSupplementaryInformationConnector
+        .createAmendSupplementaryInformation(requestData)
+        .returns(Future.successful(outcome))
+      await(service.createAmendSupplementaryInformation(requestData)) shouldBe outcome
     }
 
     "map errors according to spec" when {

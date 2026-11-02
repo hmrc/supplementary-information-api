@@ -20,8 +20,7 @@ import api.connectors.ConnectorSpec
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.requestBodyModel
-import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestData
+import CreateAmendSupplementaryInformationFixtures.requestBodyModel
 import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.Future
@@ -40,7 +39,7 @@ class CreateAmendSupplementaryInformationConnectorSpec extends ConnectorSpec {
     )
 
     val requestData: CreateAmendSupplementaryInformationRequestData =
-      Def1_CreateAmendSupplementaryInformationRequestData(Nino(nino), taxYear, requestBodyModel)
+      CreateAmendSupplementaryInformationRequestData(Nino(nino), taxYear, requestBodyModel)
 
   }
 
