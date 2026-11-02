@@ -95,7 +95,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
           ("AA123456A", "invalid", requestBodyJson, BAD_REQUEST, TaxYearFormatError),
           ("AA123456A", "2025-27", requestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "2025-26", requestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
-          ("AA123456A", "2026-27", invalidSupplementaryInformationJson, BAD_REQUEST, FormatSupplementaryInformation),
+          ("AA123456A", "2026-27", invalidSupplementaryInformationJson, BAD_REQUEST, FormatSupplementaryInformationError),
           ("AA123456A", "2026-27", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
