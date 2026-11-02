@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.controllers.validators.Validator
-import cats.data.Validated.{Invalid, Valid}
-import v1.delete.def1.Def1_DeleteSupplementaryInformationValidator
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import javax.inject.Singleton
 
@@ -27,10 +25,5 @@ import javax.inject.Singleton
 class DeleteSupplementaryInformationValidatorFactory {
 
   def validator(nino: String, taxYear: String): Validator[DeleteSupplementaryInformationRequestData] =
-    DeleteSupplementaryInformationSchema.schemaFor(taxYear) match {
-      case Valid(DeleteSupplementaryInformationSchema.Def1) =>
-        new Def1_DeleteSupplementaryInformationValidator(nino, taxYear)
-      case Invalid(errors) =>
-        Validator.returningErrors(errors)
-    }
+    new DeleteSupplementaryInformationValidator(nino, taxYear)
 }

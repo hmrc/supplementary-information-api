@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.models.errors._
 import api.services._

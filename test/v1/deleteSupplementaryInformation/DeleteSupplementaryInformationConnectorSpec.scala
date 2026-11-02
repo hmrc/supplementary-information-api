@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TaxYear}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v1.delete.def1.model.request.Def1_DeleteSupplementaryInformationRequestData
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import scala.concurrent.Future
 
@@ -31,7 +30,7 @@ class DeleteSupplementaryInformationConnectorSpec extends ConnectorSpec {
   private val taxYear: String = "2026-27"
 
   lazy val request: DeleteSupplementaryInformationRequestData =
-    Def1_DeleteSupplementaryInformationRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
+    DeleteSupplementaryInformationRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   "deleteSupplementaryInformation" must {
     "return a success response" in new HipTest with Test {

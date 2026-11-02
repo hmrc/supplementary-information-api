@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.config.AppConfig
 import api.connectors.DownstreamUri.HipUri
@@ -22,7 +22,7 @@ import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

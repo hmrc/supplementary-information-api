@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.controllers.RequestContext
 import api.models.errors.{MtdError, *}
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.*
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

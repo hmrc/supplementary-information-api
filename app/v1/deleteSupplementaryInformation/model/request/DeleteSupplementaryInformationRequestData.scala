@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-package v1.delete.def1.model.request
+package v1.deleteSupplementaryInformation.model.request
 
 import api.models.domain.{Nino, TaxYear}
-import v1.delete.DeleteSupplementaryInformationSchema
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
 
-case class Def1_DeleteSupplementaryInformationRequestData(
-                                                           nino: Nino,
-                                                           taxYear: TaxYear
-                                                         ) extends DeleteSupplementaryInformationRequestData {
-  val schema: DeleteSupplementaryInformationSchema = DeleteSupplementaryInformationSchema.Def1
-}
+case class DeleteSupplementaryInformationRequestData(nino: Nino, taxYear: TaxYear)

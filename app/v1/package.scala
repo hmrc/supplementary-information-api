@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package v1.delete.model.request
+import api.models.domain.TaxYear
 
-import api.models.domain.{Nino, TaxYear}
+package object v1 {
 
-trait DeleteSupplementaryInformationRequestData {
-  val nino: Nino
-  val taxYear: TaxYear
+  val minimumTaxYear: TaxYear = TaxYear.ending(2027)
+
 }

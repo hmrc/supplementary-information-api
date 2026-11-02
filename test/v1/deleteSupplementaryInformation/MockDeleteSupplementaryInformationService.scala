@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 

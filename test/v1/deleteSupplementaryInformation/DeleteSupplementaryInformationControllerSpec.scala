@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.controllers.ControllerTestRunner
 import api.models.audit._
@@ -24,8 +24,7 @@ import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
-import v1.delete.def1.model.request.Def1_DeleteSupplementaryInformationRequestData
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ class DeleteSupplementaryInformationControllerSpec
   private val taxYear = "2026-27"
 
   protected val requestData: DeleteSupplementaryInformationRequestData =
-    Def1_DeleteSupplementaryInformationRequestData(parsedNino, TaxYear.fromMtd(taxYear))
+    DeleteSupplementaryInformationRequestData(parsedNino, TaxYear.fromMtd(taxYear))
 
   "delete" should {
     "return 204 NO_CONTENT" when {

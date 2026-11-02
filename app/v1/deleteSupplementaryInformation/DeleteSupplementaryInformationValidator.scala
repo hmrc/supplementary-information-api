@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package v1.delete.def1
+package v1.deleteSupplementaryInformation
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.ResolveNino
+import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino}
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
-import v1.delete.def1.model.request.Def1_DeleteSupplementaryInformationRequestData 
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import cats.implicits.catsSyntaxTuple2Semigroupal
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
+import v1.minimumTaxYear
 
-import javax.inject.Inject
+import javax.inject.Singleton
 
-class Def1_DeleteSupplementaryInformationValidator @Inject() (nino: String, taxYear: String)
+@Singleton
+class DeleteSupplementaryInformationValidator(nino: String, taxYear: String)
   extends Validator[DeleteSupplementaryInformationRequestData] {
 
-  override def validate: Validated[Seq[MtdError], DeleteSupplementaryInformationRequestData] =
-    ResolveNino(nino).map { validNino =>
-      Def1_DeleteSupplementaryInformationRequestData(
-        nino = validNino,
-        taxYear = TaxYear.fromMtd(taxYear)
-      )
-    }
+  def validate: Validated[Seq[MtdError], DeleteSupplementaryInformationRequestData] =
+    (
+      ResolveNino(nino),
+      ResolveDetailedTaxYear(minimumTaxYear).apply(taxYear)
+    ).mapN(DeleteSupplementaryInformationRequestData.apply)
 }

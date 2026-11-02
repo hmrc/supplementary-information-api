@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.controllers.EndpointLogContext
 import api.models.domain.{Nino, TaxYear}
@@ -22,7 +22,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.utils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.delete.def1.model.request.Def1_DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,8 +34,8 @@ class DeleteSupplementaryInformationServiceSpec extends UnitSpec {
 
   implicit val correlationId: String = "X-123"
 
-  val requestData: Def1_DeleteSupplementaryInformationRequestData =
-    Def1_DeleteSupplementaryInformationRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
+  val requestData: DeleteSupplementaryInformationRequestData =
+    DeleteSupplementaryInformationRequestData(Nino(nino), TaxYear.fromMtd(taxYear))
 
   trait Test extends MockDeleteSupplementaryInformationConnector {
 

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.delete
+package v1.deleteSupplementaryInformation
 
 import api.models.errors.{ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import api.utils.UnitSpec
-import v1.delete.def1.Def1_DeleteSupplementaryInformationValidator
-import v1.delete.model.request.DeleteSupplementaryInformationRequestData
+import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
 
@@ -34,7 +33,7 @@ class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
     "return the Def1 validator" when {
       "given a valid request" in {
         val result = validatorFactory.validator(validNino, validTaxYear)
-        result shouldBe a[Def1_DeleteSupplementaryInformationValidator]
+        result shouldBe a[DeleteSupplementaryInformationValidator]
       }
     }
 
