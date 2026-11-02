@@ -71,7 +71,7 @@ components:
     # 404
 
     notFound:
-      description: The supplied income source could not be found.
+      description: The matching resource was not found.
       value:
         code: MATCHING_RESOURCE_NOT_FOUND
         message: Matching resource not found

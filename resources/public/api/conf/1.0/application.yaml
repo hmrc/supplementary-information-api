@@ -49,9 +49,9 @@ components:
             read:self-assessment: Grant read access
 
 tags:
-  - name: Hello World
-    description: Resources relating to a service's message
+  - name: Supplementary Information
+    description: These endpoints allow a user to create, amend, retrieve and delete supplementary information for a given tax year.
 
 paths:
-  /individuals/supplementary-information/hello-world:
-    $ref: "./hello_world_retrieve.yaml"
+  /individuals/supplementary-information/{nino}/{taxYear}:
+    $ref: "./supplementary_information.yaml"

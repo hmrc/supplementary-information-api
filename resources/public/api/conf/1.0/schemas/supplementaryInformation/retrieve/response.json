@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "submittedOn": {
+      "type": "string",
+      "description": "The date and time the supplementary information was submitted, in the format YYYY-MM-DDThh:mm:ss.SSSZ",
+      "format": "date-time",
+      "example": "2026-08-24T14:15:22.544Z"
+    },
+    "supplementaryInformation": {
+      "type": "string",
+      "description": "Additional information provided to support the tax return, including details that cannot be captured through predefined data fields. Must not be empty or contain only whitespace.",
+      "format": "string",
+      "pattern": "^[A-Za-z0-9 &'\"()*,\\-./@£]{1,4000}$",
+      "minimum": 1,
+      "maximum": 4000,
+      "example": "Additional contextual information provided for this return."
+    }
+  },
+  "required": [
+    "submittedOn",
+    "supplementaryInformation"
+  ],
+  "additionalProperties": false
+}
