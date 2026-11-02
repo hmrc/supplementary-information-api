@@ -84,3 +84,10 @@ object RuleIncorrectGovTestScenarioError
     extends MtdError("RULE_INCORRECT_GOV_TEST_SCENARIO", "The supplied Gov-Test-Scenario is not valid", BAD_REQUEST)
 
 object RuleOutsideAmendmentWindowError extends MtdError("RULE_OUTSIDE_AMENDMENT_WINDOW", "You are outside the amendment window", BAD_REQUEST)
+
+object FormatSupplementaryInformationError
+    extends MtdError(
+      "FORMAT_SUPPLEMENTARY_INFORMATION",
+      "The provided supplementaryInformation is invalid",
+      BAD_REQUEST,
+      Some(List("/supplementaryInformation")))
