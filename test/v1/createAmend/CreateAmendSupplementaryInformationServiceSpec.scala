@@ -59,8 +59,7 @@ class CreateAmendSupplementaryInformationServiceSpec extends ServiceSpec {
         "1117" -> TaxYearFormatError,
         "4200" -> RuleOutsideAmendmentWindowError,
         "1216" -> InternalError,
-        "1000" -> InternalError,
-        "1285" -> InternalError
+        "1000" -> InternalError
       )
 
       errorMap.foreach(args => serviceError.tupled(args))
