@@ -22,7 +22,7 @@ import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{ErrorWrapper, NinoFormatError, RuleOutsideAmendmentWindowError}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import play.test.Helpers.PUT
 import CreateAmendSupplementaryInformationFixtures.*
@@ -45,14 +45,14 @@ class CreateAmendSupplementaryInformationControllerSpec
         MockCreateAmendSupplementaryInformationService
           .createAmend(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
-        runOkTestWithAudit(expectedStatus = NO_CONTENT, maybeAuditRequestBody = Some(requestBodyJson))
+        runOkTestWithAudit(expectedStatus = NO_CONTENT, maybeAuditRequestBody = Some(mtdRequestBodyJson))
       }
     }
 
     "return validation error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
-        runErrorTestWithAudit(NinoFormatError, Some(requestBodyJson))
+        runErrorTestWithAudit(NinoFormatError, Some(mtdRequestBodyJson))
       }
 
       "the service returns an error" in new Test {
@@ -61,7 +61,7 @@ class CreateAmendSupplementaryInformationControllerSpec
           .createAmend(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, RuleOutsideAmendmentWindowError))))
 
-        runErrorTestWithAudit(RuleOutsideAmendmentWindowError, Some(requestBodyJson))
+        runErrorTestWithAudit(RuleOutsideAmendmentWindowError, Some(mtdRequestBodyJson))
       }
     }
   }
@@ -78,7 +78,7 @@ class CreateAmendSupplementaryInformationControllerSpec
           agentReferenceNumber = None,
           params = Map("nino" -> validNino, "taxYear" -> taxYear),
           `X-CorrelationId` = correlationId,
-          requestBody = Some(requestBodyJson),
+          requestBody = Some(mtdRequestBodyJson),
           auditResponse = auditResponse
         )
       )
@@ -101,7 +101,7 @@ class CreateAmendSupplementaryInformationControllerSpec
     MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
     protected def callController(): Future[Result] =
-      controller.createAmend(validNino, taxYear)(fakeRequest.withBody(Json.toJson(requestBodyModel)).withMethod(PUT))
+      controller.createAmend(validNino, taxYear)(fakeRequest.withBody(mtdRequestBodyJson).withMethod(PUT))
 
     protected val requestData: CreateAmendSupplementaryInformationRequestData =
       CreateAmendSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), requestBodyModel)

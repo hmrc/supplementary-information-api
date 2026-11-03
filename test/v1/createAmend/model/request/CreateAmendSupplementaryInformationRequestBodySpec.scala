@@ -31,7 +31,7 @@ class CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
   "CreateAmendSupplementaryInformationRequestBody" when {
     "read from valid Json" should {
       "produce the expected object" in {
-        requestBodyJson.as[CreateAmendSupplementaryInformationRequestBody] shouldBe requestBodyModel
+        mtdRequestBodyJson.as[CreateAmendSupplementaryInformationRequestBody] shouldBe requestBodyModel
       }
     }
 
@@ -43,7 +43,7 @@ class CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
 
     "written to Json" should {
       "produce the expected JsObject" in {
-        Json.toJson(requestBodyModel) shouldBe requestBodyJson
+        Json.toJson(requestBodyModel) shouldBe downstreamRequestBodyJson
       }
     }
   }

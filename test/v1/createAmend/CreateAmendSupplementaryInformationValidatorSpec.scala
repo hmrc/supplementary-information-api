@@ -34,7 +34,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
   private val parsedNino    = Nino(validNino)
   private val parsedTaxYear = TaxYear.fromMtd(validTaxYear)
 
-  private def validate(nino: String = validNino, taxYear: String = validTaxYear, body: JsValue = requestBodyJson) =
+  private def validate(nino: String = validNino, taxYear: String = validTaxYear, body: JsValue = mtdRequestBodyJson) =
     new CreateAmendSupplementaryInformationValidator(nino, taxYear, body).validateAndWrapResult()
 
   private def error(mtdError: MtdError) = Left(ErrorWrapper(correlationId, mtdError))
@@ -43,7 +43,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
     "return the parsed object" when {
       "return the parsed object" when {
         "a valid request is supplied" in {
-          validate(validNino, validTaxYear, requestBodyJson) shouldBe
+          validate(validNino, validTaxYear, mtdRequestBodyJson) shouldBe
             Right(
               CreateAmendSupplementaryInformationRequestData(
                 parsedNino,
@@ -56,9 +56,9 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
           val allowedChars   = """&'"()*,-./@£""".map(char => (char.toString, s"with special char $char"))
           val allowedLengths = Seq(1, 4000).map(length => ("a" * length, s"with length $length"))
           val alphanumeric = Seq(
-            (('a' to 'z').toString, "with lowercase letters"),
-            (('A' to 'A').toString, "with uppercase letters"),
-            (('0' to '9').toString, "with numbers"),
+            (('a' to 'z').mkString, "with lowercase letters"),
+            (('A' to 'A').mkString, "with uppercase letters"),
+            (('0' to '9').mkString, "with numbers"),
             ("a b", "with space")
           )
 
@@ -66,7 +66,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
 
           tests.foreach { (value, description) =>
             description in {
-              val validJson: JsValue = requestBodyJson.update("/supplementaryInformation", JsString(value))
+              val validJson: JsValue = mtdRequestBodyJson.update("/supplementaryInformation", JsString(value))
 
               validate(body = validJson) shouldBe Right(
                 CreateAmendSupplementaryInformationRequestData(
@@ -113,9 +113,9 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
         validate(body = Json.parse("""{"field": "value"}""")) shouldBe error(RuleIncorrectOrEmptyBodyError.withPath("/supplementaryInformation"))
       }
 
-      requestBodyJson.collectPaths().foreach { path =>
+      mtdRequestBodyJson.collectPaths().foreach { path =>
         s"the submitted request body has field $path with incorrect type" in {
-          val invalidJson: JsValue = requestBodyJson.update(path, JsBoolean(true))
+          val invalidJson: JsValue = mtdRequestBodyJson.update(path, JsBoolean(true))
 
           validate(body = invalidJson) shouldBe error(RuleIncorrectOrEmptyBodyError.withPath(path))
         }
@@ -131,7 +131,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
 
       tests.foreach { (value, description) =>
         description in {
-          val validJson: JsValue = requestBodyJson.update("/supplementaryInformation", JsString(value))
+          val validJson: JsValue = mtdRequestBodyJson.update("/supplementaryInformation", JsString(value))
 
           validate(body = validJson) shouldBe error(FormatSupplementaryInformationError)
         }

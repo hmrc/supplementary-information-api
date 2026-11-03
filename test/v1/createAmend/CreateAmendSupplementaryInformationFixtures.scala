@@ -21,12 +21,20 @@ import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestBo
 
 object CreateAmendSupplementaryInformationFixtures {
 
-  val requestBodyJson: JsValue = Json.parse(
+  val mtdRequestBodyJson: JsValue = Json.parse(
     """
       |{
       |  "supplementaryInformation": "This is supplementary information 123 & - * ."
       |}
     """.stripMargin
+  )
+
+  val downstreamRequestBodyJson: JsValue = Json.parse(
+    """
+      |{
+      |  "whiteSpace": "This is supplementary information 123 & - * ."
+      |}
+      """.stripMargin
   )
 
   val requestBodyModel: CreateAmendSupplementaryInformationRequestBody =

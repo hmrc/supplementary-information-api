@@ -16,13 +16,15 @@
 
 package v1.createAmend.model.request
 
-import play.api.libs.json.{Json, OFormat, OWrites}
+import play.api.libs.json.{Json, JsonConfiguration, OWrites, Reads, __}
 
 case class CreateAmendSupplementaryInformationRequestBody(supplementaryInformation: String)
 
 object CreateAmendSupplementaryInformationRequestBody {
 
-  given OFormat[CreateAmendSupplementaryInformationRequestBody] =
-    Json.format[CreateAmendSupplementaryInformationRequestBody]
+  given Reads[CreateAmendSupplementaryInformationRequestBody] = Json.reads[CreateAmendSupplementaryInformationRequestBody]
+
+  given OWrites[CreateAmendSupplementaryInformationRequestBody] =
+    (__ \ "whiteSpace").write[String].contramap(_.supplementaryInformation)
 
 }

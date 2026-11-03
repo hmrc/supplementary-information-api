@@ -26,7 +26,7 @@ import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
-import CreateAmendSupplementaryInformationFixtures.requestBodyJson
+import CreateAmendSupplementaryInformationFixtures.mtdRequestBodyJson
 
 class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBaseSpec {
 
@@ -58,7 +58,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
           )
         }
 
-        val response: WSResponse = await(request().put(requestBodyJson))
+        val response: WSResponse = await(request().put(mtdRequestBodyJson))
         response.status shouldBe NO_CONTENT
         response.body shouldBe ""
         response.header("Content-Type") shouldBe None
@@ -91,10 +91,10 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
         }
 
         val input = List(
-          ("AA1123A", "2026-27", requestBodyJson, BAD_REQUEST, NinoFormatError),
-          ("AA123456A", "invalid", requestBodyJson, BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "2025-27", requestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", "2025-26", requestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
+          ("AA1123A", "2026-27", mtdRequestBodyJson, BAD_REQUEST, NinoFormatError),
+          ("AA123456A", "invalid", mtdRequestBodyJson, BAD_REQUEST, TaxYearFormatError),
+          ("AA123456A", "2025-27", mtdRequestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
+          ("AA123456A", "2025-26", mtdRequestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "2026-27", invalidSupplementaryInformationJson, BAD_REQUEST, FormatSupplementaryInformationError),
           ("AA123456A", "2026-27", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
@@ -118,7 +118,7 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
             )
           }
 
-          val response: WSResponse = await(request().put(requestBodyJson))
+          val response: WSResponse = await(request().put(mtdRequestBodyJson))
           response.json shouldBe Json.toJson(expectedBody)
           response.status shouldBe expectedStatus
           response.header("X-CorrelationId").nonEmpty shouldBe true
