@@ -75,20 +75,14 @@ class DeleteSupplementaryInformationServiceSpec extends UnitSpec {
         }
 
       val errors = Seq(
-        "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-        "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-        "NO_DATA_FOUND"             -> NotFoundError,
-        "OUTSIDE_AMENDMENT_WINDOW"  -> RuleOutsideAmendmentWindowError,
-        "SERVER_ERROR"              -> InternalError,
-        "SERVICE_UNAVAILABLE"       -> InternalError
+        "1215" -> NinoFormatError,
+        "1117" -> TaxYearFormatError,
+        "1216" -> InternalError,
+        "4200" -> RuleOutsideAmendmentWindowError,
+        "5010" -> NotFoundError
       )
 
-      val extraTysErrors = Seq(
-        "INVALID_CORRELATION_ID" -> InternalError,
-        "TAX_YEAR_NOT_SUPPORTED" -> InternalError
-      )
-
-      (errors ++ extraTysErrors).foreach(args => serviceError.tupled(args))
+      errors.foreach(args => serviceError.tupled(args))
     }
   }
 }

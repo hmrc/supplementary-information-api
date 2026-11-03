@@ -17,9 +17,9 @@
 package v1.deleteSupplementaryInformation
 
 import api.controllers.RequestContext
-import api.models.errors.{MtdError, *}
+import api.models.errors.{MtdError, _}
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits.*
+import cats.implicits._
 import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
 import javax.inject.{Inject, Singleton}
@@ -33,17 +33,13 @@ class DeleteSupplementaryInformationService @Inject() (connector: DeleteSuppleme
                                     )(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
     connector
       .deleteSupplementaryInformation(request)
-      .map(_.leftMap(mapDownstreamErrors(errorMap)))
+      .map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
-  private val errorMap: Map[String, MtdError] = Map(
-    "INVALID_TAXABLE_ENTITY_ID" -> NinoFormatError,
-    "INVALID_TAX_YEAR"          -> TaxYearFormatError,
-    "INVALID_CORRELATION_ID"    -> InternalError,
-    "UNMATCHED_STUB_ERROR"      -> RuleIncorrectGovTestScenarioError,
-    "NO_DATA_FOUND"             -> NotFoundError,
-    "TAX_YEAR_NOT_SUPPORTED"    -> InternalError,
-    "OUTSIDE_AMENDMENT_WINDOW"  -> RuleOutsideAmendmentWindowError,
-    "SERVER_ERROR"              -> InternalError,
-    "SERVICE_UNAVAILABLE"       -> InternalError
+  private val downstreamErrorMap: Map[String, MtdError] = Map(
+    "1117" -> TaxYearFormatError,
+    "1215" -> NinoFormatError,
+    "1216" -> InternalError,
+    "4200" -> RuleOutsideAmendmentWindowError,
+    "5010" -> NotFoundError
   )
 }

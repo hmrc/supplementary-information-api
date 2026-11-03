@@ -30,7 +30,7 @@ class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
   private val validatorFactory = new DeleteSupplementaryInformationValidatorFactory
 
   "validator" should {
-    "return the Def1 validator" when {
+    "return the validator" when {
       "given a valid request" in {
         val result = validatorFactory.validator(validNino, validTaxYear)
         result shouldBe a[DeleteSupplementaryInformationValidator]

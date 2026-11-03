@@ -126,21 +126,15 @@ class DeleteSupplementaryInformationControllerISpec extends IntegrationBaseSpec 
         }
 
         val errors = Seq(
-          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
-          (UNPROCESSABLE_ENTITY, "OUTSIDE_AMENDMENT_WINDOW", BAD_REQUEST, RuleOutsideAmendmentWindowError),
-          (NOT_FOUND, "NO_DATA_FOUND", NOT_FOUND, NotFoundError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+          (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError),
+          (NOT_FOUND, "5010", NOT_FOUND, NotFoundError)
         )
 
-        val extraTysErrors = Seq(
-          (UNPROCESSABLE_ENTITY, "TAX_YEAR_NOT_SUPPORTED", INTERNAL_SERVER_ERROR, InternalError)
-        )
-
-        (errors ++ extraTysErrors).foreach(args => serviceErrorTest.tupled(args))
+        errors.foreach(args => serviceErrorTest.tupled(args))
       }
     }
   }
