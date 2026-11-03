@@ -22,7 +22,7 @@ parameters:
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
 security:
-  - User-Restricted
+  - User-Restricted:
     - read:self-assessment
 
 responses:
