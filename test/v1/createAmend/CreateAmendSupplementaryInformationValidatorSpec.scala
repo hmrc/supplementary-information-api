@@ -123,10 +123,11 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
     }
 
     "return a FormatSupplementaryInformationError" when {
-      val invalidCharSample = """:|%\""".map(char => (char.toString, s"with special char $char"))
-      val invalidLengths    = Seq(0, 4001).map(length => ("a" * length, s"with length $length"))
+      val invalidCharSample     = """:|%\""".map(char => (char.toString, s"with special char $char"))
+      val invalidLengths        = Seq(0, 4001).map(length => ("a" * length, s"with length $length"))
+      val invalidWhitespaceOnly = Seq(("    ", "with whitespace only"))
 
-      val tests = invalidCharSample ++ invalidLengths
+      val tests = invalidCharSample ++ invalidLengths ++ invalidWhitespaceOnly
 
       tests.foreach { (value, description) =>
         description in {
