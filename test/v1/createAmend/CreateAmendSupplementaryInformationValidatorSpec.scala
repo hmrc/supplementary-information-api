@@ -57,7 +57,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
           val allowedLengths = Seq(1, 4000).map(length => ("a" * length, s"with length $length"))
           val alphanumeric = Seq(
             (('a' to 'z').mkString, "with lowercase letters"),
-            (('A' to 'A').mkString, "with uppercase letters"),
+            (('A' to 'Z').mkString, "with uppercase letters"),
             (('0' to '9').mkString, "with numbers"),
             ("a b", "with space")
           )
