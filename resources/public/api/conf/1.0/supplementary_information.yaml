@@ -8,3 +8,9 @@ get:
   security:
     - User-Restricted:
         - read:self-assessment
+
+delete:
+  $ref: "./supplementary_information_delete.yaml"
+  security:
+    - User-Restricted:
+        - write:self-assessment
