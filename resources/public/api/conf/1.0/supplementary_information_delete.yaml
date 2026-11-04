@@ -2,6 +2,19 @@ summary: Delete Supplementary Information
 description: |
   This endpoint allows a developer to delete additional information for a specified individual for a given tax year.
   A National Insurance number and tax year are required.
+  
+  ###  Test data
+  Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+  
+  | Header Value (Gov-Test-Scenario) | Scenario                                                                                       |
+  |----------------------------------|------------------------------------------------------------------------------------------------|
+  | N/A - DEFAULT                    | Simulates success response.                                                                    |
+  | NOT_FOUND                        | Simulates the scenario where no data is found.                                                 |
+  | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.|                  
+  | STATEFUL                         | Performs a stateful retrieve.                                                                  |
+
+tags:
+  - Supplementary Information
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
