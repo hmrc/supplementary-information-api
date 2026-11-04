@@ -37,7 +37,7 @@ class CreateAmendSupplementaryInformationValidator @Inject() (nino: String, taxY
   override def validate: Validated[Seq[MtdError], CreateAmendSupplementaryInformationRequestData] =
     (
       ResolveNino(nino),
-      resolveTaxYear.apply(taxYear),
+      resolveTaxYear(taxYear),
       resolveJson(body)
     ).mapN { (validNino, validTaxYear, validBody) =>
       CreateAmendSupplementaryInformationRequestData(

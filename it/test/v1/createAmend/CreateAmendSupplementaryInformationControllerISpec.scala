@@ -164,17 +164,12 @@ class CreateAmendSupplementaryInformationControllerISpec extends IntegrationBase
 
     def errorBody(code: String): String =
       s"""
-         |{
-         |  "origin": "HoD",
-         |  "response": {
-         |    "failures": [
-         |      {
-         |        "type": "$code",
-         |        "reason": "downstream message"
-         |      }
-         |    ]
+         |[
+         |  {
+         |    "errorCode": "$code",
+         |    "errorDescription": "downstream message"
          |  }
-         |}
+         |]
       """.stripMargin
 
   }
