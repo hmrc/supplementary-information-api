@@ -1,1 +1,2 @@
 GET        /hello-world        v1.retrieveHelloWorld.HelloWorldController.hello
+PUT        /:nino/:taxYear     v1.createAmend.CreateAmendSupplementaryInformationController.createAmend(nino: String, taxYear: String)

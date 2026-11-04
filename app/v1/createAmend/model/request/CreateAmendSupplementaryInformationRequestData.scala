@@ -18,8 +18,8 @@ package v1.createAmend.model.request
 
 import api.models.domain.{Nino, TaxYear}
 
-trait CreateAmendSupplementaryInformationRequestData {
-  def nino: Nino
-  def taxYear: TaxYear
-  def body: CreateAmendSupplementaryInformationRequestBody
-}
+case class CreateAmendSupplementaryInformationRequestData(
+    nino: Nino,
+    taxYear: TaxYear,
+    body: CreateAmendSupplementaryInformationRequestBody
+)

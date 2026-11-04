@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1
+package v1.createAmend
 
 import api.controllers.validators.RulesValidator
 import api.controllers.validators.resolvers.ResolveStringPattern
 import api.models.errors.{FormatSupplementaryInformationError, MtdError}
 import cats.data.Validated
-import v1.createAmend.def1.model.request.*
+import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
-object Def1_CreateAmendSupplementaryInformationRulesValidator extends RulesValidator[Def1_CreateAmendSupplementaryInformationRequestData] {
+object CreateAmendSupplementaryInformationRulesValidator extends RulesValidator[CreateAmendSupplementaryInformationRequestData] {
 
   private val supplementaryInformationRegex = """^[A-Za-z0-9 &'"()*,\-./@£]{1,4000}$""".r
 
@@ -30,7 +30,7 @@ object Def1_CreateAmendSupplementaryInformationRulesValidator extends RulesValid
     ResolveStringPattern(supplementaryInformationRegex, FormatSupplementaryInformationError)
 
   def validateBusinessRules(
-      parsed: Def1_CreateAmendSupplementaryInformationRequestData): Validated[Seq[MtdError], Def1_CreateAmendSupplementaryInformationRequestData] = {
+      parsed: CreateAmendSupplementaryInformationRequestData): Validated[Seq[MtdError], CreateAmendSupplementaryInformationRequestData] = {
 
     validateSupplementaryInformation(parsed.body.supplementaryInformation).onSuccess(parsed)
   }
