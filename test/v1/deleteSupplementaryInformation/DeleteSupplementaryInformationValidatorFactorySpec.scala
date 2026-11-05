@@ -53,4 +53,5 @@ class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
       }
     }
   }
+
 }

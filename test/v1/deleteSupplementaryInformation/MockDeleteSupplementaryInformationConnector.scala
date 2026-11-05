@@ -32,10 +32,12 @@ trait MockDeleteSupplementaryInformationConnector extends TestSuite with MockFac
   object MockDeleteSupplementaryInformationConnector {
 
     def deleteSupplementaryInformation(
-                                        deleteSupplementaryInformationRequestData: DeleteSupplementaryInformationRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+        deleteSupplementaryInformationRequestData: DeleteSupplementaryInformationRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (connector
         .deleteSupplementaryInformation(_: DeleteSupplementaryInformationRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(deleteSupplementaryInformationRequestData, *, *, *)
     }
+
   }
+
 }

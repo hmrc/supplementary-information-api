@@ -67,9 +67,10 @@ class DeleteSupplementaryInformationServiceSpec extends UnitSpec {
 
           MockDeleteSupplementaryInformationConnector
             .deleteSupplementaryInformation(requestData)
-            .returns(Future.successful(
-              Left(ResponseWrapper("resultId", DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))
-            ))
+            .returns(
+              Future.successful(
+                Left(ResponseWrapper("resultId", DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))
+              ))
 
           await(service.deleteSupplementaryInformation(requestData)) shouldBe Left(ErrorWrapper("resultId", error))
         }
@@ -85,4 +86,5 @@ class DeleteSupplementaryInformationServiceSpec extends UnitSpec {
       errors.foreach(args => serviceError.tupled(args))
     }
   }
+
 }

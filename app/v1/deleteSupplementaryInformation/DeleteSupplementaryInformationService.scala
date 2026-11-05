@@ -29,8 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeleteSupplementaryInformationService @Inject() (connector: DeleteSupplementaryInformationConnector) extends BaseService {
 
   def deleteSupplementaryInformation(
-                                      request: DeleteSupplementaryInformationRequestData
-                                    )(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
+      request: DeleteSupplementaryInformationRequestData
+  )(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
     connector
       .deleteSupplementaryInformation(request)
       .map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
@@ -42,4 +42,5 @@ class DeleteSupplementaryInformationService @Inject() (connector: DeleteSuppleme
     "4200" -> RuleOutsideAmendmentWindowError,
     "5010" -> NotFoundError
   )
+
 }

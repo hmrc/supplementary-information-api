@@ -28,10 +28,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DeleteSupplementaryInformationConnector @Inject() (val http: HttpClientV2, val appConfig: AppConfig)
-  extends BaseDownstreamConnector {
+class DeleteSupplementaryInformationConnector @Inject() (val http: HttpClientV2, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def deleteSupplementaryInformation(request: DeleteSupplementaryInformationRequestData)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def deleteSupplementaryInformation(request: DeleteSupplementaryInformationRequestData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
     import request.*
 
     val downstreamUri = HipUri[Unit](
@@ -40,4 +42,5 @@ class DeleteSupplementaryInformationConnector @Inject() (val http: HttpClientV2,
 
     delete(downstreamUri)
   }
+
 }

@@ -28,15 +28,15 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class DeleteSupplementaryInformationController @Inject() (
-                                                           val authService: EnrolmentsAuthService,
-                                                           val lookupService: MtdIdLookupService,
-                                                           service: DeleteSupplementaryInformationService,
-                                                           validatorFactory: DeleteSupplementaryInformationValidatorFactory,
-                                                           auditService: AuditService,
-                                                           cc: ControllerComponents,
-                                                           idGenerator: IdGenerator
-                                                         )(implicit ec: ExecutionContext, appConfig: AppConfig)
-  extends AuthorisedController(cc) {
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    service: DeleteSupplementaryInformationService,
+    validatorFactory: DeleteSupplementaryInformationValidatorFactory,
+    auditService: AuditService,
+    cc: ControllerComponents,
+    idGenerator: IdGenerator
+)(implicit ec: ExecutionContext, appConfig: AppConfig)
+    extends AuthorisedController(cc) {
 
   override val endpointName: String = "delete-supplementary-information"
 
@@ -66,4 +66,5 @@ class DeleteSupplementaryInformationController @Inject() (
 
       requestHandler.handleRequest()
     }
+
 }

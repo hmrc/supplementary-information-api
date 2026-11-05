@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DeleteSupplementaryInformationControllerSpec
-  extends ControllerTestRunner
+    extends ControllerTestRunner
     with MockDeleteSupplementaryInformationService
     with MockDeleteSupplementaryInformationValidatorFactory {
 
@@ -105,4 +105,5 @@ class DeleteSupplementaryInformationControllerSpec
 
     MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns true
   }
+
 }

@@ -26,4 +26,5 @@ class DeleteSupplementaryInformationValidatorFactory {
 
   def validator(nino: String, taxYear: String): Validator[DeleteSupplementaryInformationRequestData] =
     new DeleteSupplementaryInformationValidator(nino, taxYear)
+
 }

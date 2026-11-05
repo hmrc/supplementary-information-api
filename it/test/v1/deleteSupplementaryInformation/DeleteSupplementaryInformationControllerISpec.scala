@@ -31,7 +31,7 @@ class DeleteSupplementaryInformationControllerISpec extends IntegrationBaseSpec 
 
     val nino: String = "AA123456A"
     def taxYear: String
-    def downstreamUri: String = s"/itsd/white-space/$nino"
+    def downstreamUri: String                      = s"/itsd/white-space/$nino"
     def downstreamQueryParams: Map[String, String] = Map("taxYear" -> "26-27")
 
     def mtdUri: String = s"/$nino/$taxYear"
@@ -57,6 +57,7 @@ class DeleteSupplementaryInformationControllerISpec extends IntegrationBaseSpec 
          |  "reason": "downstream message"
          |}
          |""".stripMargin
+
   }
 
   "Calling the Delete Supplementary Information endpoint" should {
@@ -138,4 +139,5 @@ class DeleteSupplementaryInformationControllerISpec extends IntegrationBaseSpec 
       }
     }
   }
+
 }

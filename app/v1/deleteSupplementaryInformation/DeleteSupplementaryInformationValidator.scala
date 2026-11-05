@@ -28,12 +28,12 @@ import v1.minimumTaxYear
 import javax.inject.Singleton
 
 @Singleton
-class DeleteSupplementaryInformationValidator(nino: String, taxYear: String)
-  extends Validator[DeleteSupplementaryInformationRequestData] {
+class DeleteSupplementaryInformationValidator(nino: String, taxYear: String) extends Validator[DeleteSupplementaryInformationRequestData] {
 
   def validate: Validated[Seq[MtdError], DeleteSupplementaryInformationRequestData] =
     (
       ResolveNino(nino),
       ResolveDetailedTaxYear(minimumTaxYear).apply(taxYear)
     ).mapN(DeleteSupplementaryInformationRequestData.apply)
+
 }

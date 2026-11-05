@@ -41,5 +41,7 @@ trait MockDeleteSupplementaryInformationService extends TestSuite with MockFacto
         )
         .expects(requestData, *, *)
     }
+
   }
+
 }
