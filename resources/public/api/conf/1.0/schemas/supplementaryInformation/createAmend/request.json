@@ -6,8 +6,13 @@
       "type": "string",
       "description": "Additional information provided to support the tax return, including details that cannot be captured through predefined data fields. Must not be empty or contain only whitespace.",
       "example": "Additional contextual information provided for this return.",
+      "minLength": 1,
+      "maxLength": 4000,
       "pattern": "^[A-Za-z0-9 &'\"()*,\\-./@£]{1,4000}$"
     }
   },
+  "required": [
+    "supplementaryInformation"
+  ],
   "additionalProperties": false
 }
