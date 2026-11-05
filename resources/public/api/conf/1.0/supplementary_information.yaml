@@ -1,3 +1,8 @@
+put:
+  $ref: "./supplementary_information_create_amend.yaml"
+  security:
+    - User-Restricted:
+        - write:self-assessment
 get:
   $ref: "./supplementary_information_retrieve.yaml"
   security:
