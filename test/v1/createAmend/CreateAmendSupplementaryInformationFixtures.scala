@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1.fixture
+package v1.createAmend
 
 import play.api.libs.json.{JsValue, Json}
-import v1.createAmend.def1.model.request.Def1_CreateAmendSupplementaryInformationRequestBody
+import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestBody
 
-object Def1_CreateAmendSupplementaryInformationFixture {
+object CreateAmendSupplementaryInformationFixtures {
 
-  val requestBodyJson: JsValue = Json.parse(
+  val mtdRequestBodyJson: JsValue = Json.parse(
     """
       |{
       |  "supplementaryInformation": "This is supplementary information 123 & - * ."
@@ -29,7 +29,15 @@ object Def1_CreateAmendSupplementaryInformationFixture {
     """.stripMargin
   )
 
-  val requestBodyModel: Def1_CreateAmendSupplementaryInformationRequestBody =
-    Def1_CreateAmendSupplementaryInformationRequestBody(supplementaryInformation = "This is supplementary information 123 & - * .")
+  val downstreamRequestBodyJson: JsValue = Json.parse(
+    """
+      |{
+      |  "whiteSpace": "This is supplementary information 123 & - * ."
+      |}
+      """.stripMargin
+  )
+
+  val requestBodyModel: CreateAmendSupplementaryInformationRequestBody =
+    CreateAmendSupplementaryInformationRequestBody(supplementaryInformation = "This is supplementary information 123 & - * .")
 
 }

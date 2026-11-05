@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1.model.request
+package v1.retrieveSupplementaryInformation
 
-import api.models.domain.{Nino, TaxYear}
-import v1.createAmend.CreateAmendSupplementaryInformationSchema
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import api.controllers.validators.Validator
+import v1.retrieveSupplementaryInformation.model.request.RetrieveSupplementaryInformationRequestData
 
-case class Def1_CreateAmendSupplementaryInformationRequestData(
-    nino: Nino,
-    taxYear: TaxYear,
-    body: Def1_CreateAmendSupplementaryInformationRequestBody
-) extends CreateAmendSupplementaryInformationRequestData {
-  val schema: CreateAmendSupplementaryInformationSchema = CreateAmendSupplementaryInformationSchema.Def1
+import javax.inject.Singleton
+
+@Singleton
+class RetrieveSupplementaryInformationValidatorFactory {
+
+  def validator(nino: String, taxYear: String): Validator[RetrieveSupplementaryInformationRequestData] =
+    new RetrieveSupplementaryInformationValidator(nino, taxYear)
+
 }

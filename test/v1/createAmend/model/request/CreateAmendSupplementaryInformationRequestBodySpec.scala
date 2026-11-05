@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1.model.request
+package v1.createAmend.model.request
 
 import api.utils.UnitSpec
 import play.api.libs.json.{JsError, JsValue, Json}
-import v1.createAmend.def1.fixture.Def1_CreateAmendSupplementaryInformationFixture.*
+import v1.createAmend.CreateAmendSupplementaryInformationFixtures.*
 
-class Def1_CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
+class CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
 
   val invalidJson: JsValue = Json.parse(
     """
@@ -28,22 +28,22 @@ class Def1_CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
       |""".stripMargin
   )
 
-  "Def1_CreateAmendSupplementaryInformationRequestBody" when {
+  "CreateAmendSupplementaryInformationRequestBody" when {
     "read from valid Json" should {
       "produce the expected object" in {
-        requestBodyJson.as[Def1_CreateAmendSupplementaryInformationRequestBody] shouldBe requestBodyModel
+        mtdRequestBodyJson.as[CreateAmendSupplementaryInformationRequestBody] shouldBe requestBodyModel
       }
     }
 
     "read from invalid Json" should {
       "provide a JsError" in {
-        invalidJson.validate[Def1_CreateAmendSupplementaryInformationRequestBody] shouldBe a[JsError]
+        invalidJson.validate[CreateAmendSupplementaryInformationRequestBody] shouldBe a[JsError]
       }
     }
 
     "written to Json" should {
       "produce the expected JsObject" in {
-        Json.toJson(requestBodyModel) shouldBe requestBodyJson
+        Json.toJson(requestBodyModel) shouldBe downstreamRequestBodyJson
       }
     }
   }

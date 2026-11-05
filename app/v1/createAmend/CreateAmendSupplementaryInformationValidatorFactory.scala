@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package v1.createAmend.def1.model.request
+package v1.createAmend
 
-import play.api.libs.json.{Json, OFormat}
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestBody
+import api.controllers.validators.Validator
+import play.api.libs.json.JsValue
+import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
 
-case class Def1_CreateAmendSupplementaryInformationRequestBody(supplementaryInformation: String)
-    extends CreateAmendSupplementaryInformationRequestBody
+import javax.inject.Singleton
 
-object Def1_CreateAmendSupplementaryInformationRequestBody {
+@Singleton
+class CreateAmendSupplementaryInformationValidatorFactory {
 
-  implicit val format: OFormat[Def1_CreateAmendSupplementaryInformationRequestBody] =
-    Json.format[Def1_CreateAmendSupplementaryInformationRequestBody]
+  def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAmendSupplementaryInformationRequestData] = {
+    CreateAmendSupplementaryInformationValidator(nino, taxYear, body)
+  }
 
 }
