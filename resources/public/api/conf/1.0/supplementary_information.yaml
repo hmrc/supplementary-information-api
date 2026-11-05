@@ -1,0 +1,5 @@
+get:
+  $ref: "./supplementary_information_retrieve.yaml"
+  security:
+    - User-Restricted:
+        - read:self-assessment
