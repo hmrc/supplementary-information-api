@@ -8,7 +8,6 @@ description: |
   | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
   |----------------------------------|-------------------------------------------------------------------------------------------------|
   | N/A - DEFAULT                    | Simulates success response.                                                                     |
-  | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
   | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
   | STATEFUL                         | Performs a stateful retrieve.                                                                   |
 
