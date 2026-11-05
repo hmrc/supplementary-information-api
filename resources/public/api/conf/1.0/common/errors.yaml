@@ -34,11 +34,11 @@ components:
         code: RULE_TAX_YEAR_RANGE_INVALID
         message: A tax year range of one year is required
 
-    formatValue:
-      description: One or more values have been added with the incorrect format.
+    formatSupplementaryInformation:
+      description: The format of the supplied supplementaryInformation is not valid.
       value:
-        code: FORMAT_VALUE
-        message: The value must be between 0 and 99999999999.99
+        code: FORMAT_SUPPLEMENTARY_INFORMATION
+        message: The provided supplementaryInformation is invalid
 
     ruleTaxYearNotEnded:
       description: The submission has been made before the tax year it relates to has ended.

@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "supplementaryInformation": {
+      "type": "string",
+      "description": "Additional information provided to support the tax return, including details that cannot be captured through predefined data fields. Must not be empty or contain only whitespace.",
+      "example": "Additional contextual information provided for this return.",
+      "pattern": "^[A-Za-z0-9 &'\"()*,\\-./@£]{1,4000}$"
+    }
+  },
+  "additionalProperties": false
+}
