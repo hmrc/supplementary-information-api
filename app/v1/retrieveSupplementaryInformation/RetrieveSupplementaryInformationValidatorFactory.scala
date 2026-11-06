@@ -16,13 +16,14 @@
 
 package v1.retrieveSupplementaryInformation
 
+import api.config.AppConfig
 import api.controllers.validators.Validator
 import v1.retrieveSupplementaryInformation.model.request.RetrieveSupplementaryInformationRequestData
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RetrieveSupplementaryInformationValidatorFactory {
+class RetrieveSupplementaryInformationValidatorFactory @Inject() (implicit appConfig: AppConfig) {
 
   def validator(nino: String, taxYear: String): Validator[RetrieveSupplementaryInformationRequestData] =
     new RetrieveSupplementaryInformationValidator(nino, taxYear)

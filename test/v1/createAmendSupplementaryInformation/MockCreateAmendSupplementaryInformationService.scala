@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 

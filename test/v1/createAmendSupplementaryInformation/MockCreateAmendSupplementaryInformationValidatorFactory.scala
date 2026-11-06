@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import api.controllers.validators.{MockValidatorFactory, Validator}
 import org.scalamock.handlers.CallHandler
 import play.api.libs.json.JsValue
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
 trait MockCreateAmendSupplementaryInformationValidatorFactory extends MockValidatorFactory[CreateAmendSupplementaryInformationRequestData] {
 

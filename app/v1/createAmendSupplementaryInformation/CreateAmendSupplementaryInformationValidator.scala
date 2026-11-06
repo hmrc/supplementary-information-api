@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
+import api.config.AppConfig
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino, ResolveNonEmptyJsonObject}
 import api.models.domain.TaxYear
@@ -23,15 +24,18 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple3Semigroupal
 import play.api.libs.json.JsValue
-import v1.createAmend.CreateAmendSupplementaryInformationRulesValidator.validateBusinessRules
-import v1.createAmend.model.request.{CreateAmendSupplementaryInformationRequestBody, CreateAmendSupplementaryInformationRequestData}
+import v1.createAmendSupplementaryInformation.CreateAmendSupplementaryInformationRulesValidator.validateBusinessRules
+import v1.createAmendSupplementaryInformation.model.request.{
+  CreateAmendSupplementaryInformationRequestBody,
+  CreateAmendSupplementaryInformationRequestData
+}
 
 import javax.inject.Inject
 
-class CreateAmendSupplementaryInformationValidator @Inject() (nino: String, taxYear: String, body: JsValue)
+class CreateAmendSupplementaryInformationValidator @Inject() (nino: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig)
     extends Validator[CreateAmendSupplementaryInformationRequestData] {
 
-  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
+  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromDownstreamInt(appConfig.minimumTaxYear))
   private lazy val resolveJson    = new ResolveNonEmptyJsonObject[CreateAmendSupplementaryInformationRequestBody]()
 
   override def validate: Validated[Seq[MtdError], CreateAmendSupplementaryInformationRequestData] =

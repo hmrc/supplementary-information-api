@@ -16,6 +16,7 @@
 
 package v1.deleteSupplementaryInformation
 
+import api.config.AppConfig
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino}
 import api.models.domain.TaxYear
@@ -23,17 +24,19 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple2Semigroupal
 import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
-import v1.minimumTaxYear
 
 import javax.inject.Singleton
 
 @Singleton
-class DeleteSupplementaryInformationValidator(nino: String, taxYear: String) extends Validator[DeleteSupplementaryInformationRequestData] {
+class DeleteSupplementaryInformationValidator(nino: String, taxYear: String)(implicit appConfig: AppConfig)
+    extends Validator[DeleteSupplementaryInformationRequestData] {
+
+  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromDownstreamInt(appConfig.minimumTaxYear))
 
   def validate: Validated[Seq[MtdError], DeleteSupplementaryInformationRequestData] =
     (
       ResolveNino(nino),
-      ResolveDetailedTaxYear(minimumTaxYear).apply(taxYear)
+      resolveTaxYear.apply(taxYear)
     ).mapN(DeleteSupplementaryInformationRequestData.apply)
 
 }

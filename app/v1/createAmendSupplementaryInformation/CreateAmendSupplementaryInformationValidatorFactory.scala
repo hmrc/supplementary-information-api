@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package v1.createAmend.model.request
+package v1.createAmendSupplementaryInformation
 
-import play.api.libs.json.{Json, JsonConfiguration, OWrites, Reads, __}
+import api.config.AppConfig
+import api.controllers.validators.Validator
+import play.api.libs.json.JsValue
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
-case class CreateAmendSupplementaryInformationRequestBody(supplementaryInformation: String)
+import javax.inject.{Inject, Singleton}
 
-object CreateAmendSupplementaryInformationRequestBody {
+@Singleton
+class CreateAmendSupplementaryInformationValidatorFactory @Inject() (implicit appConfig: AppConfig) {
 
-  given Reads[CreateAmendSupplementaryInformationRequestBody] = Json.reads[CreateAmendSupplementaryInformationRequestBody]
-
-  given OWrites[CreateAmendSupplementaryInformationRequestBody] =
-    (__ \ "whiteSpace").write[String].contramap(_.supplementaryInformation)
+  def validator(nino: String, taxYear: String, body: JsValue): Validator[CreateAmendSupplementaryInformationRequestData] = {
+    CreateAmendSupplementaryInformationValidator(nino, taxYear, body)
+  }
 
 }

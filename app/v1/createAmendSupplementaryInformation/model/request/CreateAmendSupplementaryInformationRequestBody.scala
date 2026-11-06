@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-import api.models.domain.TaxYear
+package v1.createAmendSupplementaryInformation.model.request
 
-package object v1 {
+import play.api.libs.json.{Json, JsonConfiguration, OWrites, Reads, __}
 
-  val minimumTaxYear: TaxYear = TaxYear.ending(2027)
+case class CreateAmendSupplementaryInformationRequestBody(supplementaryInformation: String)
+
+object CreateAmendSupplementaryInformationRequestBody {
+
+  given Reads[CreateAmendSupplementaryInformationRequestBody] = Json.reads[CreateAmendSupplementaryInformationRequestBody]
+
+  given OWrites[CreateAmendSupplementaryInformationRequestBody] =
+    (__ \ "whiteSpace").write[String].contramap(_.supplementaryInformation)
 
 }

@@ -16,13 +16,14 @@
 
 package v1.deleteSupplementaryInformation
 
+import api.config.AppConfig
 import api.controllers.validators.Validator
 import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DeleteSupplementaryInformationValidatorFactory {
+class DeleteSupplementaryInformationValidatorFactory @Inject() (implicit appConfig: AppConfig) {
 
   def validator(nino: String, taxYear: String): Validator[DeleteSupplementaryInformationRequestData] =
     new DeleteSupplementaryInformationValidator(nino, taxYear)

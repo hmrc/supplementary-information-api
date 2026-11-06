@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import api.config.AppConfig
 import api.connectors.DownstreamUri.HipUri
@@ -22,7 +22,7 @@ import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

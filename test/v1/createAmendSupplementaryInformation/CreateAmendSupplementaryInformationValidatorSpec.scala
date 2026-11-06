@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
+import api.config.MockAppConfig
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import play.api.libs.json.*
-import v1.createAmend.CreateAmendSupplementaryInformationFixtures.*
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmendSupplementaryInformation.CreateAmendSupplementaryInformationFixtures.*
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
-class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with JsonErrorValidators {
+class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with JsonErrorValidators with MockAppConfig {
+
+  private trait Test {
+
+    MockedAppConfig.minimumTaxYear.returns(2027).anyNumberOfTimes()
+
+  }
 
   private implicit val correlationId: String = "someCorrelationId"
 
@@ -42,7 +49,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
   "CreateAmendSupplementaryInformationValidator" should {
     "return the parsed object" when {
       "return the parsed object" when {
-        "a valid request is supplied" in {
+        "a valid request is supplied" in new Test {
           validate(validNino, validTaxYear, mtdRequestBodyJson) shouldBe
             Right(
               CreateAmendSupplementaryInformationRequestData(
@@ -65,7 +72,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
           val tests = allowedChars ++ allowedLengths ++ alphanumeric
 
           tests.foreach { (value, description) =>
-            description in {
+            description in new Test {
               val validJson: JsValue = mtdRequestBodyJson.update("/supplementaryInformation", JsString(value))
 
               validate(body = validJson) shouldBe Right(
@@ -81,40 +88,40 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
     }
 
     "return a NinoFormatError" when {
-      "an invalid nino is supplied" in {
+      "an invalid nino is supplied" in new Test {
         validate(nino = "A12344A") shouldBe error(NinoFormatError)
       }
     }
 
     "return RuleTaxYearNotSupportedError" when {
-      "an unsupported tax year is supplied" in {
+      "an unsupported tax year is supplied" in new Test {
         validate(taxYear = "2025-26") shouldBe error(RuleTaxYearNotSupportedError)
       }
     }
 
     "return TaxYearFormatError" when {
-      "the tax year format is invalid" in {
+      "the tax year format is invalid" in new Test {
         validate(taxYear = "25-26") shouldBe error(TaxYearFormatError)
       }
     }
 
     "return RuleTaxYearRangeInvalidError" when {
-      "the tax year range is invalid" in {
+      "the tax year range is invalid" in new Test {
         validate(taxYear = "2025-27") shouldBe error(RuleTaxYearRangeInvalidError)
       }
     }
 
     "return a RuleIncorrectOrEmptyBodyError" when {
-      "an empty Json body is submitted" in {
+      "an empty Json body is submitted" in new Test {
         validate(body = JsObject.empty) shouldBe error(RuleIncorrectOrEmptyBodyError)
       }
 
-      "a non-empty JSON body is submitted without any expected fields" in {
+      "a non-empty JSON body is submitted without any expected fields" in new Test {
         validate(body = Json.parse("""{"field": "value"}""")) shouldBe error(RuleIncorrectOrEmptyBodyError.withPath("/supplementaryInformation"))
       }
 
       mtdRequestBodyJson.collectPaths().foreach { path =>
-        s"the submitted request body has field $path with incorrect type" in {
+        s"the submitted request body has field $path with incorrect type" in new Test {
           val invalidJson: JsValue = mtdRequestBodyJson.update(path, JsBoolean(true))
 
           validate(body = invalidJson) shouldBe error(RuleIncorrectOrEmptyBodyError.withPath(path))
@@ -130,7 +137,7 @@ class CreateAmendSupplementaryInformationValidatorSpec extends UnitSpec with Jso
       val tests = invalidCharSample ++ invalidLengths ++ invalidWhitespaceOnly
 
       tests.foreach { (value, description) =>
-        description in {
+        description in new Test {
           val validJson: JsValue = mtdRequestBodyJson.update("/supplementaryInformation", JsString(value))
 
           validate(body = validJson) shouldBe error(FormatSupplementaryInformationError)

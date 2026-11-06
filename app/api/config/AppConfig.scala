@@ -43,6 +43,8 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
   def hipDownstreamConfig: BasicAuthDownstreamConfig = basicAuthDownstreamConfig("hip")
 
   // API Config
+  def minimumTaxYear: Int = config.getInt("minimumTaxYear")
+
   def apiGatewayContext: String                    = config.getString("api.gateway.context")
   def confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import api.config.AppConfig
 import api.controllers.*

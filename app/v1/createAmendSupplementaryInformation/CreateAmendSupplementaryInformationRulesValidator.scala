@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import api.controllers.validators.RulesValidator
 import api.controllers.validators.resolvers.ResolveStringPattern
 import api.models.errors.{FormatSupplementaryInformationError, MtdError}
 import cats.data.Validated
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestData
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
 object CreateAmendSupplementaryInformationRulesValidator extends RulesValidator[CreateAmendSupplementaryInformationRequestData] {
 
