@@ -1,3 +1,5 @@
 GET        /hello-world        v1.retrieveHelloWorld.HelloWorldController.hello
+
 GET        /:nino/:taxYear     v1.retrieveSupplementaryInformation.RetrieveSupplementaryInformationController.retrieve(nino: String, taxYear: String)
 PUT        /:nino/:taxYear     v1.createAmend.CreateAmendSupplementaryInformationController.createAmend(nino: String, taxYear: String)
+DELETE     /:nino/:taxYear     v1.deleteSupplementaryInformation.DeleteSupplementaryInformationController.delete(nino: String, taxYear: String)

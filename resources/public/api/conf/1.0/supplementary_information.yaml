@@ -3,8 +3,15 @@ put:
   security:
     - User-Restricted:
         - write:self-assessment
+
 get:
   $ref: "./supplementary_information_retrieve.yaml"
   security:
     - User-Restricted:
         - read:self-assessment
+
+delete:
+  $ref: "./supplementary_information_delete.yaml"
+  security:
+    - User-Restricted:
+        - write:self-assessment
