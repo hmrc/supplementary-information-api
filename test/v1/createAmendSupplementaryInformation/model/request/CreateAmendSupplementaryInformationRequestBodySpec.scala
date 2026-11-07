@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package v1.createAmend.model.request
+package v1.createAmendSupplementaryInformation.model.request
 
 import api.utils.UnitSpec
 import play.api.libs.json.{JsError, JsValue, Json}
-import v1.createAmend.CreateAmendSupplementaryInformationFixtures.*
+import v1.createAmendSupplementaryInformation.CreateAmendSupplementaryInformationFixtures.*
 
 class CreateAmendSupplementaryInformationRequestBodySpec extends UnitSpec {
 

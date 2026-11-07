@@ -36,6 +36,7 @@ trait MockAppConfig extends TestSuite with MockFactory {
       (() => mockAppConfig.hipDownstreamConfig: BasicAuthDownstreamConfig).expects()
 
     // API Config
+    def minimumTaxYear: CallHandler0[Int]                        = (() => mockAppConfig.minimumTaxYear: Int).expects()
     def featureSwitchConfig: CallHandler0[Configuration]         = (() => mockAppConfig.featureSwitchConfig: Configuration).expects()
     def apiGatewayContext: CallHandler0[String]                  = (() => mockAppConfig.apiGatewayContext: String).expects()
     def apiStatus(version: Version): CallHandler[String]         = (mockAppConfig.apiStatus: Version => String).expects(version)

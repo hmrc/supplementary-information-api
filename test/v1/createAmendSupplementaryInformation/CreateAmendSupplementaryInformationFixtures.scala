@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package v1.createAmend
+package v1.createAmendSupplementaryInformation
 
 import play.api.libs.json.{JsValue, Json}
-import v1.createAmend.model.request.CreateAmendSupplementaryInformationRequestBody
+import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestBody
 
 object CreateAmendSupplementaryInformationFixtures {
 

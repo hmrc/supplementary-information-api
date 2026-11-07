@@ -16,6 +16,7 @@
 
 package v1.retrieveSupplementaryInformation
 
+import api.config.AppConfig
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveNino}
 import api.models.domain.TaxYear
@@ -24,9 +25,10 @@ import cats.data.Validated
 import cats.implicits.catsSyntaxTuple2Semigroupal
 import v1.retrieveSupplementaryInformation.model.request.RetrieveSupplementaryInformationRequestData
 
-class RetrieveSupplementaryInformationValidator(nino: String, taxYear: String) extends Validator[RetrieveSupplementaryInformationRequestData] {
+class RetrieveSupplementaryInformationValidator(nino: String, taxYear: String)(implicit appConfig: AppConfig)
+    extends Validator[RetrieveSupplementaryInformationRequestData] {
 
-  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
+  private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromDownstreamInt(appConfig.minimumTaxYear))
 
   def validate: Validated[Seq[MtdError], RetrieveSupplementaryInformationRequestData] =
     (

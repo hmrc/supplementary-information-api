@@ -16,11 +16,18 @@
 
 package v1.deleteSupplementaryInformation
 
+import api.config.MockAppConfig
 import api.models.errors.{ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import api.utils.UnitSpec
 import v1.deleteSupplementaryInformation.model.request.DeleteSupplementaryInformationRequestData
 
-class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
+class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec with MockAppConfig {
+
+  private trait Test {
+
+    MockedAppConfig.minimumTaxYear.returns(2027).anyNumberOfTimes()
+
+  }
 
   private implicit val correlationId: String = "1234"
 
@@ -31,21 +38,21 @@ class DeleteSupplementaryInformationValidatorFactorySpec extends UnitSpec {
 
   "validator" should {
     "return the validator" when {
-      "given a valid request" in {
+      "given a valid request" in new Test {
         val result = validatorFactory.validator(validNino, validTaxYear)
         result shouldBe a[DeleteSupplementaryInformationValidator]
       }
     }
 
     "return a validation error" when {
-      "given an invalid tax year" in {
+      "given an invalid tax year" in new Test {
         val result: Either[ErrorWrapper, DeleteSupplementaryInformationRequestData] =
           validatorFactory.validator(validNino, "not-a-tax-year").validateAndWrapResult()
 
         result shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
       }
 
-      "given an invalid nino" in {
+      "given an invalid nino" in new Test {
         val result: Either[ErrorWrapper, DeleteSupplementaryInformationRequestData] =
           validatorFactory.validator("A12344A", validTaxYear).validateAndWrapResult()
 
