@@ -1,0 +1,5 @@
+post:
+  $ref: "./supplementary_information_initiate_upload.yaml"
+  security:
+    - User-Restricted:
+        - write:self-assessment

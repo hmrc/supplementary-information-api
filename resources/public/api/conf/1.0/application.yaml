@@ -53,7 +53,15 @@ components:
 tags:
   - name: Supplementary Information
     description: These endpoints allow a user to create, amend, retrieve and delete supplementary information for a given tax year.
+  {{#if (enabled "r23_upload_docs")}}
+  - name: Supplementary Document Upload
+    description: These endpoints allow a user to upload a supplementary document for a given tax year.
+  {{/if}}
 
 paths:
   /individuals/supplementary-information/{nino}/{taxYear}:
     $ref: "./supplementary_information.yaml"
+  {{#if (enabled "r23_upload_docs")}}
+  /individuals/supplementary-information/document/{nino}/{taxYear}:
+    $ref: "./supplementary_document_upload.yaml"
+  {{/if}}

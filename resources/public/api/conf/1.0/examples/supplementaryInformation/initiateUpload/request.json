@@ -1,0 +1,4 @@
+{
+  "successRedirect": "https://myservice.com/nextPage",
+  "errorRedirect": "https://myservice.com/errorPage"
+}
