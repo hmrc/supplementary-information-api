@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class UserRequest[A](userDetails: UserDetails, request: Request[A]) extends WrappedRequest[A](request)
+case class UserRequest[A](userDetails: Option[UserDetails], request: Request[A]) extends WrappedRequest[A](request)
 
 abstract class AuthorisedController(
     cc: ControllerComponents
@@ -59,7 +59,7 @@ abstract class AuthorisedController(
 
       authService.authorised(mtdId, endpointAllowsSupportingAgents).flatMap[Result] {
         case Right(userDetails) =>
-          block(UserRequest(userDetails, request))
+          block(UserRequest(Some(userDetails), request))
         case Left(mtdError) =>
           errorResponse(mtdError)
       }

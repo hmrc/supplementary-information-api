@@ -72,7 +72,7 @@ class RequestHandlerSpec
 
   implicit val userRequest: UserRequest[AnyContent] = {
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(versionHeader)
-    UserRequest[AnyContent](userDetails, fakeRequest)
+    UserRequest[AnyContent](Some(userDetails), fakeRequest)
   }
 
   implicit val appConfig: AppConfig = mockAppConfig
