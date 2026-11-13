@@ -17,7 +17,7 @@
 package api.utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDateTime, ZoneId}
 import java.util.Locale
 
 object DateUtils {
@@ -27,4 +27,6 @@ object DateUtils {
     .withZone(ZoneId.of("GMT"))
 
   def longDateTimestampGmt(dateTime: LocalDateTime): String = longDateTimeFormatGmt.format(dateTime)
+
+  def currentTimestamp: String = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
 }

@@ -109,6 +109,24 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
+  def patch[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp], maybeIntent: Option[String] = None)(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
+
+    val strategy = uri.strategy
+
+    def doPatch(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
+      http.patch(url"${getBackendUri(uri.path, strategy)}").withBody(Json.toJson(body)).execute[DownstreamOutcome[Resp]]
+    }
+
+    for {
+      headers <- getBackendHeaders(strategy, jsonContentTypeHeader ++ intentHeader(maybeIntent))
+      result  <- doPatch(headers)
+    } yield result
+  }
+
   private def intentHeader(maybeIntent: Option[String]) =
     maybeIntent.map(intent => Seq("intent" -> intent)).getOrElse(Nil)
 
