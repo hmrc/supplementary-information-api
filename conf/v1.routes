@@ -1,3 +1,5 @@
 GET        /:nino/:taxYear     v1.retrieveSupplementaryInformation.RetrieveSupplementaryInformationController.retrieve(nino: String, taxYear: String)
 PUT        /:nino/:taxYear     v1.createAmendSupplementaryInformation.CreateAmendSupplementaryInformationController.createAmend(nino: String, taxYear: String)
 DELETE     /:nino/:taxYear     v1.deleteSupplementaryInformation.DeleteSupplementaryInformationController.delete(nino: String, taxYear: String)
+
+POST        /document/:nino/:taxYear     v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadController.initiate(nino: String, taxYear: String)
