@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "successRedirect": {
+      "type": "string",
+      "format": "uri",
+      "description": "The success redirect URL to redirect to after the file has been successfully uploaded.",
+      "pattern": "^https://\\w+(\\.\\w+)+.*$",
+      "example": "https://myservice.com/nextPage"
+    },
+    "errorRedirect": {
+      "type": "string",
+      "format": "uri",
+      "description": "The error redirect URL to redirect to if an error is encountered during upload.",
+      "pattern": "^https://\\w+(\\.\\w+)+.*$",
+      "example": "https://myservice.com/errorPage"
+    }
+  },
+  "additionalProperties": false
+}

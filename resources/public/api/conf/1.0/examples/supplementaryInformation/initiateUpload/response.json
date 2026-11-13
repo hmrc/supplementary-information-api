@@ -1,0 +1,18 @@
+{
+  "documentId": "11370e18-6e24-453e-b45a-76d3e32ea33d",
+  "uploadRequest": {
+    "uploadUrl": "https://xxxx/upscan-upload-proxy/bucketName",
+    "fields": {
+      "acl": "private",
+      "key": "11370e18-6e24-453e-b45a-76d3e32ea33d",
+      "policy": "xxxxxxxx==",
+      "x-amz-algorithm": "AWS4-HMAC-SHA256",
+      "x-amz-credential": "ASIAxxxxxxxxx/20180202/eu-west-2/s3/aws4_request",
+      "x-amz-date": "yyyyMMddThhmmssZ",
+      "x-amz-meta-callback-url": "https://api.service.hmrc.gov.uk/individuals/supplementary-information/internal/upscan-callback",
+      "x-amz-signature": "xxxx",
+      "success_action_redirect": "https://myservice.com/nextPage",
+      "error_action_redirect": "https://myservice.com/errorPage"
+    }
+  }
+}

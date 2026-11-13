@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "documentId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The unique document reference.",
+      "example": "11370e18-6e24-453e-b45a-76d3e32ea33d"
+    },
+    "uploadRequest": {
+      "description": "The object containing information required to upload a document.",
+      "type": "object",
+      "properties": {
+        "uploadUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The url used to upload a document.",
+          "pattern": "^https://\\w+(\\.\\w+)+.*$",
+          "example": "https://xxxx/upscan-upload-proxy/bucketName"
+        },
+        "fields": {
+          "description": "Object containing key-value pairs that must be sent as part of the document upload request.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "uploadUrl",
+        "fields"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "documentId",
+    "uploadRequest"
+  ],
+  "additionalProperties": false
+}
