@@ -31,13 +31,15 @@ trait IntegrationBaseSpec extends UnitSpec with WireMockHelper with GuiceOneServ
   lazy val mockPort: String = WireMockHelper.wireMockPort.toString
 
   def servicesConfig: Map[String, Any] = Map(
-    "microservice.services.hip.host"           -> mockHost,
-    "microservice.services.hip.port"           -> mockPort,
-    "microservice.services.mtd-id-lookup.host" -> mockHost,
-    "microservice.services.mtd-id-lookup.port" -> mockPort,
-    "microservice.services.auth.host"          -> mockHost,
-    "microservice.services.auth.port"          -> mockPort,
-    "auditing.consumer.baseUri.port"           -> mockPort
+    "microservice.services.hip.host"             -> mockHost,
+    "microservice.services.hip.port"             -> mockPort,
+    "microservice.services.mtd-id-lookup.host"   -> mockHost,
+    "microservice.services.mtd-id-lookup.port"   -> mockPort,
+    "microservice.services.auth.host"            -> mockHost,
+    "microservice.services.auth.port"            -> mockPort,
+    "microservice.services.upscan-initiate.host" -> mockHost,
+    "microservice.services.upscan-initiate.port" -> mockPort,
+    "auditing.consumer.baseUri.port"             -> mockPort
   )
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
