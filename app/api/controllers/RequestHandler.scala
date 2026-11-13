@@ -21,7 +21,7 @@ import api.config.Deprecation.HasDeprecationDates
 import api.controllers.validators.Validator
 import api.models.errors.{ErrorWrapper, InternalError}
 import api.models.outcomes.ResponseWrapper
-import api.routing.Version
+import api.routing.{Version, Versions}
 import api.services.ServiceOutcome
 import api.utils.DateUtils.longDateTimestampGmt
 import api.utils.Logging
@@ -91,17 +91,21 @@ object RequestHandler {
     // Scoped as a private delegate so as to keep the logic completely separate from the configuration
     private object Delegate extends RequestHandler with Logging with RequestContextImplicits {
 
-      implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Version) {
+      implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Option[Version]) {
 
-        private def withDeprecationHeaders: List[(String, String)] = appConfig.deprecationFor(apiVersion) match {
-          case Valid(deprecation: HasDeprecationDates) =>
-            List(
-              "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
-              "Link"        -> appConfig.apiDocumentationUrl
-            ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
-
-          case _ => Nil
-        }
+        private def withDeprecationHeaders: List[(String, String)] =
+          apiVersion match {
+            case None => Nil
+            case Some(version) =>
+              appConfig.deprecationFor(version) match {
+                case Valid(deprecation: HasDeprecationDates) =>
+                  List(
+                    "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
+                    "Link"        -> appConfig.apiDocumentationUrl
+                  ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
+                case _ => Nil
+              }
+          }
 
         def withApiHeaders(correlationId: String, responseHeaders: (String, String)*): Result = {
 
@@ -156,7 +160,7 @@ object RequestHandler {
           ec: ExecutionContext,
           appConfig: AppConfig): Result = {
 
-        implicit val apiVersion: Version = Version(request)
+        implicit val apiVersion: Option[Version] = Versions.getFromRequest(request).toOption
 
         logger.info(
           s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] - " +
@@ -173,7 +177,7 @@ object RequestHandler {
       private def handleFailure(
           errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
 
-        implicit val apiVersion: Version = Version(request)
+        implicit val apiVersion: Option[Version] = Versions.getFromRequest(request).toOption
         logger.warn(
           s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: ${ctx.correlationId}")
@@ -195,8 +199,10 @@ object RequestHandler {
           ctx: RequestContext,
           request: UserRequest[?],
           ec: ExecutionContext): Unit =
-        auditHandler.foreach { creator =>
-          creator.performAudit(request.userDetails, httpStatus, response)
+        request.userDetails.foreach { userDetails =>
+          auditHandler.foreach { creator =>
+            creator.performAudit(userDetails, httpStatus, response)
+          }
         }
 
     }
