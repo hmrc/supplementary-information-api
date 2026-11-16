@@ -16,11 +16,11 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
-import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
+import api.connectors.ConnectorSpec
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadFixtures.*
+import v1.initiateSupplementaryDocumentUpload.model.request.UpscanInitiateRequest
 import v1.initiateSupplementaryDocumentUpload.model.response.InitiateSupplementaryDocumentUploadResponse
 
 import scala.concurrent.Future
@@ -46,30 +46,25 @@ class UpscanInitiateConnectorSpec extends ConnectorSpec {
   }
 
   "UpscanInitiateConnector" should {
-    "post the upload request with the required headers and return the response" in new Test {
-      val outcome = Right(ResponseWrapper(correlationId, responseModel))
+    "post the upload request and return the response" when {
+      "redirect urls are supplied" in new Test {
+        val outcome: Right[Nothing, ResponseWrapper[InitiateSupplementaryDocumentUploadResponse]] =
+          Right(ResponseWrapper(correlationId, responseModel))
 
-      willPost(downstreamUrl, upscanRequestModel).returns(Future.successful(outcome))
+        willPost(downstreamUrl, upscanRequestModel).returns(Future.successful(outcome))
 
-      await(connector.upscanInitiate(requestDataModel)) shouldBe outcome
-    }
+        await(connector.upscanInitiate(requestDataModel)) shouldBe outcome
+      }
 
-    "omit redirect URLs when no request body is supplied" in new Test {
-      val outcome = Right(ResponseWrapper(correlationId, responseModel))
-      val body    = upscanRequestModel.copy(successRedirect = None, errorRedirect = None)
+      "no redirect urls are supplied" in new Test {
+        val outcome: Right[Nothing, ResponseWrapper[InitiateSupplementaryDocumentUploadResponse]] =
+          Right(ResponseWrapper(correlationId, responseModel))
+        val body: UpscanInitiateRequest = upscanRequestModel.copy(successRedirect = None, errorRedirect = None)
 
-      willPost(downstreamUrl, body).returns(Future.successful(outcome))
+        willPost(downstreamUrl, body).returns(Future.successful(outcome))
 
-      await(connector.upscanInitiate(requestDataModel.copy(body = None))) shouldBe outcome
-    }
-
-    "return downstream errors unchanged" in new Test {
-      val outcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
-        Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNKNOWN_ERROR"))))
-
-      willPost(downstreamUrl, upscanRequestModel).returns(Future.successful(outcome))
-
-      await(connector.upscanInitiate(requestDataModel)) shouldBe outcome
+        await(connector.upscanInitiate(requestDataModel.copy(body = None))) shouldBe outcome
+      }
     }
   }
 

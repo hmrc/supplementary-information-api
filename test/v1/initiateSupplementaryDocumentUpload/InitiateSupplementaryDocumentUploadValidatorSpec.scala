@@ -19,7 +19,6 @@ package v1.initiateSupplementaryDocumentUpload
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.utils.UnitSpec
-import cats.data.Validated.{Invalid, Valid}
 import play.api.libs.json.{JsValue, Json}
 import v1.initiateSupplementaryDocumentUpload.model.request.{
   InitiateSupplementaryDocumentUploadRequestBody,
@@ -27,6 +26,8 @@ import v1.initiateSupplementaryDocumentUpload.model.request.{
 }
 
 class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
+
+  private implicit val correlationId: String = "someCorrelationId"
 
   private val nino    = "AA123456A"
   private val taxYear = "2026-27"
@@ -36,13 +37,15 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
     "errorRedirect"   -> "https://example.com/error"
   )
 
-  private def validator(body: Option[JsValue] = Some(validBody)) =
-    new InitiateSupplementaryDocumentUploadValidator(nino, taxYear, body)
+  private def validator(nino: String = nino, taxYear: String = taxYear, body: Option[JsValue] = Some(validBody)) =
+    new InitiateSupplementaryDocumentUploadValidator(nino, taxYear, body).validateAndWrapResult()
+
+  private def error(mtdError: MtdError) = Left(ErrorWrapper(correlationId, mtdError))
 
   "InitiateSupplementaryDocumentUploadValidator" should {
     "return the parsed request" when {
       "both redirects are present" in {
-        validator().validate shouldBe Valid(
+        validator() shouldBe Right(
           InitiateSupplementaryDocumentUploadRequestData(
             Nino(nino),
             TaxYear.fromMtd(taxYear),
@@ -56,7 +59,12 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
         )
       }
       "body is not present" in {
-        validator(None).validate shouldBe Valid(
+        validator(body = None) shouldBe Right(
+          InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), None)
+        )
+      }
+      "body is empty" in {
+        validator(body = Some(Json.obj())) shouldBe Right(
           InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), None)
         )
       }
@@ -66,12 +74,12 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
           "https://example.com:8443/path?key=value#fragment"
         ).foreach { url =>
           s"$field contains a valid redirect of $url" in {
-            validator(Some(validBody ++ Json.obj(field -> url))).validate.isValid shouldBe true
+            validator(body = Some(validBody ++ Json.obj(field -> url))).isRight shouldBe true
           }
         }
 
         s"$field is not present" in {
-          validator(Some(validBody - field)).validate.isValid shouldBe true
+          validator(body = Some(validBody - field)).isRight shouldBe true
         }
       }
     }
@@ -89,19 +97,39 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
             "https://example."
           ).foreach { url =>
             s"reject $field not matching the regex: '$url'" in {
-              validator(Some(validBody ++ Json.obj(field -> url))).validate shouldBe
-                Invalid(List(RedirectUrlFormatError.withPath(s"/$field")))
+              validator(body = Some(validBody ++ Json.obj(field -> url))) shouldBe
+                error(RedirectUrlFormatError.withPath(s"/$field"))
             }
           }
         }
       }
-      "both redirects are invalid" in {
-        implicit val correlationId: String = "someCorrelationId"
-        val body                           = Json.obj("successRedirect" -> "http://example.com", "errorRedirect" -> "invalid")
+      "return a RedirectUrlFormatError" in {
+        val body = Json.obj("successRedirect" -> "http://example.com", "errorRedirect" -> "invalid")
 
-        validator(Some(body)).validateAndWrapResult() shouldBe Left(
-          ErrorWrapper(correlationId, RedirectUrlFormatError.withPaths(Seq("/successRedirect", "/errorRedirect")))
-        )
+        validator(body = Some(body)) shouldBe error(RedirectUrlFormatError.withPaths(Seq("/successRedirect", "/errorRedirect")))
+      }
+    }
+    "return a NinoFormatError" when {
+      "an invalid nino is supplied" in {
+        validator(nino = "A12344A") shouldBe error(NinoFormatError)
+      }
+    }
+
+    "return RuleTaxYearNotSupportedError" when {
+      "an unsupported tax year is supplied" in {
+        validator(taxYear = "2025-26") shouldBe error(RuleTaxYearNotSupportedError)
+      }
+    }
+
+    "return TaxYearFormatError" when {
+      "the tax year format is invalid" in {
+        validator(taxYear = "25-26") shouldBe error(TaxYearFormatError)
+      }
+    }
+
+    "return RuleTaxYearRangeInvalidError" when {
+      "the tax year range is invalid" in {
+        validator(taxYear = "2025-27") shouldBe error(RuleTaxYearRangeInvalidError)
       }
     }
   }
