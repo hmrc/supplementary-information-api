@@ -42,6 +42,11 @@ class AppConfigSpec extends UnitSpec {
       result shouldBe "http://localhost:9769"
     }
 
+    "return the Upscan initiate base URL" in {
+      val result = simpleAppConfig.upscanInitiateBaseUrl
+      result shouldBe "http://localhost:9570"
+    }
+
     "return the HIP config" in {
       val expectedHipEnvHeaders = Some(
         List(
@@ -507,6 +512,11 @@ class AppConfigSpec extends UnitSpec {
            |      mtd-id-lookup {
            |        host = localhost
            |        port = 9769
+           |      }
+           |
+           |      upscan-initiate {
+           |        host = localhost
+           |        port = 9570
            |      }
            |
            |      hip {
