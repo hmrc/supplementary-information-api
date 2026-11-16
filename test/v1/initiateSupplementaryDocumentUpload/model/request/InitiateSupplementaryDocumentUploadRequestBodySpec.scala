@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.initiateSupplementaryDocumentUpload.model
+package v1.initiateSupplementaryDocumentUpload.model.request
 
 import api.utils.UnitSpec
 import play.api.libs.json.{JsBoolean, JsError, JsNumber, Json}
 import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadFixtures.*
-import v1.initiateSupplementaryDocumentUpload.model.request.InitiateSupplementaryDocumentUploadRequestBody
 
 class InitiateSupplementaryDocumentUploadRequestBodySpec extends UnitSpec {
 

@@ -137,9 +137,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         )
 
         input.foreach(args => serviceErrorTest.tupled(args))
-
       }
-
     }
   }
 

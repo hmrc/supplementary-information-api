@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.initiateSupplementaryDocumentUpload.model
+package v1.initiateSupplementaryDocumentUpload.model.response
 
 import api.utils.UnitSpec
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadFixtures.*
-import v1.initiateSupplementaryDocumentUpload.model.response.InitiateSupplementaryDocumentUploadResponse
 
 class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
 
@@ -29,11 +28,10 @@ class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
         downstreamResponseJson.validate[InitiateSupplementaryDocumentUploadResponse] shouldBe JsSuccess(responseModel)
       }
 
-      "accept an empty fields object" in {
+      "reject an empty fields object" in {
         val json = downstreamResponseJson + ("uploadRequest" -> Json.obj("href" -> "https://example.com/upload", "fields" -> Json.obj()))
 
-        json.validate[InitiateSupplementaryDocumentUploadResponse] shouldBe
-          JsSuccess(responseModel.copy(uploadRequest = responseModel.uploadRequest.copy(fields = Map.empty)))
+        json.validate[InitiateSupplementaryDocumentUploadResponse] shouldBe a[JsError]
       }
 
       "reject missing required fields" in {
@@ -61,10 +59,11 @@ class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
     }
 
     "written to JSON" should {
-      "use the public field names without leaking downstream field names" in {
+      "produce the expected JsObject" in {
         Json.toJson(responseModel) shouldBe mtdResponseJson
       }
     }
+
   }
 
 }

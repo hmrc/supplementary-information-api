@@ -17,9 +17,10 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.*
-import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import api.utils.IdGenerator
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import api.routing.Version
 import api.config.AppConfig
 
 import javax.inject.{Inject, Singleton}
@@ -31,6 +32,7 @@ class InitiateSupplementaryDocumentUploadController @Inject() (
     val lookupService: MtdIdLookupService,
     validatorFactory: InitiateSupplementaryDocumentUploadValidatorFactory,
     service: InitiateSupplementaryDocumentUploadService,
+    auditService: AuditService,
     cc: ControllerComponents,
     idGenerator: IdGenerator
 )(implicit ec: ExecutionContext, appConfig: AppConfig)
@@ -45,11 +47,20 @@ class InitiateSupplementaryDocumentUploadController @Inject() (
     implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
     val validator                    = validatorFactory.validator(nino, taxYear, request.body.asJson)
 
-    RequestHandler
+    val requestHandler = RequestHandler
       .withValidator(validator)
       .withService(service.initiateSupplementaryDocumentUpload)
       .withPlainJsonResult(successStatus = CREATED)
-      .handleRequest()
+      .withAuditing(AuditHandler(
+        auditService = auditService,
+        auditType = "InitiateSupplementaryDocumentUpload",
+        transactionName = "initiate-supplementary-document-upload",
+        apiVersion = Version(request),
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        requestBody = request.body.asJson
+      ))
+
+    requestHandler.handleRequest()
   }
 
 }
