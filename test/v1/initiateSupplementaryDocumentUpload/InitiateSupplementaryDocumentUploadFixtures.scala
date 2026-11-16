@@ -34,7 +34,7 @@ object InitiateSupplementaryDocumentUploadFixtures {
   )
 
   val downstreamRequestBodyJson: JsObject = Json.obj(
-    "callbackUrl"     -> "placeholder",
+    "callbackUrl"     -> "https://callback",
     "successRedirect" -> "https://example.com/success",
     "errorRedirect"   -> "https://example.com/error",
     "maximumFileSize" -> 5242880L
@@ -77,7 +77,7 @@ object InitiateSupplementaryDocumentUploadFixtures {
 
   val upscanRequestModel: UpscanInitiateRequest =
     UpscanInitiateRequest(
-      callbackUrl = "placeholder",
+      callbackUrl = "https://callback",
       successRedirect = Some("https://example.com/success"),
       errorRedirect = Some("https://example.com/error"),
       maximumFileSize = 5242880
