@@ -37,8 +37,8 @@ trait MockUpscanInitiateConnector extends TestSuite with MockFactory {
         requestData: InitiateSupplementaryDocumentUploadRequestData
     ): CallHandler[Future[DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse]]] =
       (mockUpscanInitiateConnector
-        .upscanInitiate(_: InitiateSupplementaryDocumentUploadRequestData)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+        .upscanInitiate(_: InitiateSupplementaryDocumentUploadRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
 
   }
 

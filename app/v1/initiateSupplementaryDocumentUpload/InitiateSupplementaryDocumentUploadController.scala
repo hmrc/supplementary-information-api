@@ -48,7 +48,7 @@ class InitiateSupplementaryDocumentUploadController @Inject() (
     RequestHandler
       .withValidator(validator)
       .withService(service.initiateSupplementaryDocumentUpload)
-      .withPlainJsonResult()
+      .withPlainJsonResult(successStatus = CREATED)
       .handleRequest()
   }
 

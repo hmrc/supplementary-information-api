@@ -20,19 +20,18 @@ import play.api.libs.json.JsObject
 import api.models.errors.*
 import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.support.IntegrationBaseSpec
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matching, postRequestedFor, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-//import play.api.http.HeaderNames.ACCEPT
 import play.api.libs.json.Json
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-//import play.api.libs.ws.DefaultBodyReadables.readableAsString
 import InitiateSupplementaryDocumentUploadFixtures.*
 
 class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBaseSpec {
 
   "Calling the Initiate Supplementary Document Upload endpoint" should {
-    "return a 200 status code and correct response body" when {
+    "return a 201 status code and correct response body" when {
       "a valid request is made" in new Test {
 
         override def setupStubs(): StubMapping = {
@@ -49,8 +48,17 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         }
 
         val response: WSResponse = await(request().post(mtdRequestBodyJson))
-        response.status shouldBe OK
+        response.status shouldBe CREATED
         response.json shouldBe mtdResponseJson
+
+        wireMockServer.verify(
+          1,
+          postRequestedFor(urlEqualTo(downstreamUri))
+            .withHeader("CorrelationId", matching(".+"))
+            .withHeader("User-Agent", equalTo("supplementary-information-api"))
+            .withHeader("Content-Type", equalTo("application/json"))
+            .withRequestBody(equalToJson(downstreamRequestBodyJson.toString))
+        )
       }
     }
 

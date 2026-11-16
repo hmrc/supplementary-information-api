@@ -36,13 +36,11 @@ class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with Mo
     uploadRequest = UploadRequest("https://example.com", Map("key" -> "value"))
   )
 
-  trait Test {
-    val service = new InitiateSupplementaryDocumentUploadService(mockUpscanInitiateConnector)
-  }
+  val service = new InitiateSupplementaryDocumentUploadService(mockUpscanInitiateConnector)
 
   "InitiateSupplementaryDocumentUploadService" when {
     "initiateSupplementaryDocumentUpload is called" should {
-      "return a created response" in new Test {
+      "return a created response" in {
         val outcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
           Right(ResponseWrapper(correlationId, response))
 
@@ -53,7 +51,7 @@ class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with Mo
         await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe outcome
       }
 
-      "map upscan downstream errors to an internal error" in new Test {
+      "map upscan downstream errors to an internal error" in {
         MockedUpscanInitiateConnector
           .upscanInitiate(requestData)
           .returns(
@@ -63,17 +61,6 @@ class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with Mo
 
         await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe Left(ErrorWrapper(correlationId, InternalError))
       }
-
-//      "map an unmatched stub error to a government test scenario error" in new Test {
-//        MockedUpscanInitiateConnector
-//          .upscanInitiate(requestData)
-//          .returns(
-//            Future.successful(
-//              Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNMATCHED_STUB_ERROR"))))
-//            ))
-//
-//        await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe Left(ErrorWrapper(correlationId, RuleIncorrectGovTestScenarioError))
-//      }
     }
   }
 
