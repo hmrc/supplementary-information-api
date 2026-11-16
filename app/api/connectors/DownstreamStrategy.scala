@@ -43,6 +43,15 @@ trait DownstreamStrategy {
 
 object DownstreamStrategy {
 
+  def noAuthStrategy(downstreamBaseUrl: String): DownstreamStrategy = new DownstreamStrategy {
+    override def baseUrl: String = downstreamBaseUrl
+
+    override def contractHeaders(correlationId: String)(implicit ec: ExecutionContext): Future[Seq[(String, String)]] =
+      Future.successful(Seq("CorrelationId" -> correlationId))
+
+    override def environmentHeaders: Seq[String] = Nil
+  }
+
   /** Creates a strategy instance that uses the OAuth client id and secret but as a base64-encoded Basic auth token.
     * @param downstreamConfig
     *   configuration for the downstream host & endpoint

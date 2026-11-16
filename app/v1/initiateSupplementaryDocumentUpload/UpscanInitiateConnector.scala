@@ -17,13 +17,11 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.config.AppConfig
+import api.connectors.DownstreamUri.UpscanUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import play.api.http.HeaderNames
-import play.api.libs.json.Json
-import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import v1.initiateSupplementaryDocumentUpload.model.request.{InitiateSupplementaryDocumentUploadRequestData, UpscanInitiateRequest}
 import v1.initiateSupplementaryDocumentUpload.model.response.InitiateSupplementaryDocumentUploadResponse
 
@@ -38,26 +36,19 @@ class UpscanInitiateConnector @Inject() (
 
   def upscanInitiate(request: InitiateSupplementaryDocumentUploadRequestData)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): Future[DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse]] = {
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse]] = {
 
-    val upscanInitiateUri: String = s"${appConfig.config.baseUrl("upscan-initiate")}/upscan/v2/initiate"
+    val downstreamUri = UpscanUri[InitiateSupplementaryDocumentUploadResponse]("upscan/v2/initiate")
 
     val upscanRequest = UpscanInitiateRequest(
-      callbackUrl = "placeholder", // TODO update callback url when available
+      callbackUrl = appConfig.upscanCallbackUrl, // TODO update callback url when available
       successRedirect = request.body.flatMap(_.successRedirect),
       errorRedirect = request.body.flatMap(_.errorRedirect),
-      maximumFileSize = 5242880 // TODO check if config
+      maximumFileSize = appConfig.upscanMaxFileSize
     )
 
-    val headers = Map(
-      HeaderNames.CONTENT_TYPE -> "application/json"
-    )
-
-    http
-      .post(url"$upscanInitiateUri")
-      .setHeader(headers.toSeq*)
-      .withBody(Json.toJson(upscanRequest))
-      .execute[DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse]]
+    post(upscanRequest, downstreamUri)
   }
 
 }
