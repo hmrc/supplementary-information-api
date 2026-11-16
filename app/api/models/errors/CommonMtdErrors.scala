@@ -35,7 +35,7 @@ object ValueFormatError extends MtdError("FORMAT_VALUE", "The value must be betw
 
 }
 
-object RedirectUrlFormatError extends MtdError("FORMAT_REDIRECT_URL", "The redirect URL format is invalid", BAD_REQUEST)
+object RedirectUrlFormatError extends MtdError("FORMAT_REDIRECT_URL", "The provided redirect URL is invalid", BAD_REQUEST)
 
 //Standard Errors
 object NotFoundError extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)

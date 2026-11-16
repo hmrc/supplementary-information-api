@@ -35,6 +35,11 @@ trait MockAppConfig extends TestSuite with MockFactory {
     def hipDownstreamConfig: CallHandler[BasicAuthDownstreamConfig] =
       (() => mockAppConfig.hipDownstreamConfig: BasicAuthDownstreamConfig).expects()
 
+    // Upscan Config
+    def upscanInitiateBaseUrl: CallHandler0[String] = (() => mockAppConfig.upscanInitiateBaseUrl: String).expects()
+    def upscanCallbackUrl: CallHandler0[String]     = (() => mockAppConfig.upscanCallbackUrl: String).expects()
+    def upscanMaxFileSize: CallHandler0[Long]       = (() => mockAppConfig.upscanMaxFileSize: Long).expects()
+
     // API Config
     def minimumTaxYear: CallHandler0[Int]                        = (() => mockAppConfig.minimumTaxYear: Int).expects()
     def featureSwitchConfig: CallHandler0[Configuration]         = (() => mockAppConfig.featureSwitchConfig: Configuration).expects()
