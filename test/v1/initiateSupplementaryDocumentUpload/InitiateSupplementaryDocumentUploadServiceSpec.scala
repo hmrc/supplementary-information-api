@@ -40,7 +40,7 @@ class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with Mo
 
   "InitiateSupplementaryDocumentUploadService" when {
     "initiateSupplementaryDocumentUpload is called" should {
-      "return a created response" in {
+      "return a success response with expected body" in {
         val outcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
           Right(ResponseWrapper(correlationId, response))
 

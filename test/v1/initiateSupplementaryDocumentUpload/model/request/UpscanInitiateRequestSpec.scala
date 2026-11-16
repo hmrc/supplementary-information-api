@@ -24,8 +24,12 @@ class UpscanInitiateRequestSpec extends UnitSpec {
 
   "UpscanInitiateRequest" when {
     "written to JSON" should {
-      "produce the expected downstream request including the default maximum file size" in {
+      "produce the expected downstream request" in {
         Json.toJson(upscanRequestModel) shouldBe downstreamRequestBodyJson
+      }
+      "produce the expected downstream request with optional fields missing" in {
+        Json.toJson(upscanRequestModel.copy(successRedirect = None, errorRedirect = None)) shouldBe
+          downstreamRequestBodyJson - "successRedirect" - "errorRedirect"
       }
     }
   }
