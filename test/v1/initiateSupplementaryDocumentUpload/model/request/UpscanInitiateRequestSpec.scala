@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.initiateSupplementaryDocumentUpload.model.upscan
+package v1.initiateSupplementaryDocumentUpload.model.request
 
 import api.utils.UnitSpec
 import play.api.libs.json.Json

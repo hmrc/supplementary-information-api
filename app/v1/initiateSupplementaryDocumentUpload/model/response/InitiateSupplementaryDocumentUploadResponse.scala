@@ -38,7 +38,7 @@ object UploadRequest {
 
   given reads: Reads[UploadRequest] = (
     (__ \ "href").read[String] and
-      (__ \ "fields").read[Map[String, String]]
+      (__ \ "fields").read[Map[String, String]].filter(JsonValidationError("error.expected.nonEmpty"))(_.nonEmpty)
   )(UploadRequest.apply)
 
   given writes: OWrites[UploadRequest] = Json.writes[UploadRequest]
