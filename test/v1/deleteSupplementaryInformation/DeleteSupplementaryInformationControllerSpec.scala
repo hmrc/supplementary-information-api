@@ -17,9 +17,10 @@
 package v1.deleteSupplementaryInformation
 
 import api.controllers.ControllerTestRunner
-import api.models.audit._
+import api.models.audit.*
+import api.models.auth.UserType
 import api.models.domain.TaxYear
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.JsValue
@@ -89,7 +90,7 @@ class DeleteSupplementaryInformationControllerSpec
         auditType = "DeleteSupplementaryInformation",
         transactionName = "delete-supplementary-information",
         detail = GenericAuditDetail(
-          userType = "Individual",
+          userType = UserType.Individual,
           agentReferenceNumber = None,
           versionNumber = apiVersion.name,
           params = Map("nino" -> validNino, "taxYear" -> taxYear),

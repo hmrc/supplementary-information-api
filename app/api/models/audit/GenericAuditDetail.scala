@@ -17,12 +17,12 @@
 package api.models.audit
 
 import api.controllers.{AuditHandler, RequestContext}
-import api.models.auth.UserDetails
+import api.models.auth.{UserDetails, UserType}
 import api.routing.Version
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, JsValue, OWrites}
 
-case class GenericAuditDetail(userType: String,
+case class GenericAuditDetail(userType: UserType,
                               agentReferenceNumber: Option[String],
                               versionNumber: String,
                               params: Map[String, String],
@@ -33,7 +33,7 @@ case class GenericAuditDetail(userType: String,
 object GenericAuditDetail {
 
   implicit val writes: OWrites[GenericAuditDetail] = (
-    (JsPath \ "userType").write[String] and
+    (JsPath \ "userType").write[UserType] and
       (JsPath \ "agentReferenceNumber").writeNullable[String] and
       (JsPath \ "versionNumber").write[String] and
       JsPath.write[Map[String, String]] and

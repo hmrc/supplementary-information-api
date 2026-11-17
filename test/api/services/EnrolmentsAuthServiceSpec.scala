@@ -17,7 +17,7 @@
 package api.services
 
 import api.config.{ConfidenceLevelConfig, MockAppConfig}
-import api.models.auth.UserDetails
+import api.models.auth.{UserDetails, UserType}
 import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
 import api.models.outcomes.AuthOutcome
 import api.services.EnrolmentsAuthService.*
@@ -88,7 +88,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .returns(Future.successful(retrievalsResult))
 
         val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId))
-        result shouldBe Right(UserDetails(mtdId, "Individual", None))
+        result shouldBe Right(UserDetails(mtdId, UserType.Individual, None))
       }
 
     def authorisedOrganisation(authValidationEnabled: Boolean, initialPredicate: Predicate): Unit =
@@ -102,7 +102,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .returns(Future.successful(retrievalsResult))
 
         val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId))
-        result shouldBe Right(UserDetails(mtdId, "Organisation", None))
+        result shouldBe Right(UserDetails(mtdId, UserType.Organisation, None))
       }
 
     def authorisedAgentsMissingArn(authValidationEnabled: Boolean, initialPredicate: Predicate): Unit = {
@@ -157,7 +157,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         mockConfidenceLevelCheckConfig(authValidationEnabled = authValidationEnabled)
 
         val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId))
-        result shouldBe Right(UserDetails(mtdId, "Agent", Some(arn)))
+        result shouldBe Right(UserDetails(mtdId, UserType.Agent, Some(arn)))
       }
 
     def authorisedSupportingAgent(
@@ -197,7 +197,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         mockConfidenceLevelCheckConfig(authValidationEnabled = authValidationEnabled)
 
         val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId, endpointAllowsSupportingAgents = true))
-        result shouldBe Right(UserDetails(mtdId, "Supporting Agent", Some(arn)))
+        result shouldBe Right(UserDetails(mtdId, UserType.SupportingAgent, Some(arn)))
       }
 
     def disallowSupportingAgentForPrimaryOnlyEndpoint(
