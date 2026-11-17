@@ -20,12 +20,12 @@ import api.controllers.validators.Validator
 import play.api.libs.json.JsValue
 import v1.initiateSupplementaryDocumentUpload.model.request.InitiateSupplementaryDocumentUploadRequestData
 
-import javax.inject.Inject
+import javax.inject.Singleton
 
-class InitiateSupplementaryDocumentUploadValidatorFactory @Inject() {
+@Singleton
+class InitiateSupplementaryDocumentUploadValidatorFactory {
 
-  def validator(nino: String, taxYear: String, body: Option[JsValue]): Validator[InitiateSupplementaryDocumentUploadRequestData] = {
+  def validator(nino: String, taxYear: String, body: Option[JsValue]): Validator[InitiateSupplementaryDocumentUploadRequestData] =
     InitiateSupplementaryDocumentUploadValidator(nino, taxYear, body)
-  }
 
 }

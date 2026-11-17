@@ -16,17 +16,16 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
-import play.api.libs.json.JsObject
 import api.models.errors.*
 import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.support.IntegrationBaseSpec
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matching, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, postRequestedFor, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
-import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-import InitiateSupplementaryDocumentUploadFixtures.*
+import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadFixtures.*
 
 class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBaseSpec {
 
@@ -54,7 +53,6 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         wireMockServer.verify(
           1,
           postRequestedFor(urlEqualTo(downstreamUri))
-            .withHeader("CorrelationId", matching(".+"))
             .withHeader("User-Agent", equalTo("supplementary-information-api"))
             .withHeader("Content-Type", equalTo("application/json"))
             .withRequestBody(equalToJson(downstreamRequestBodyJson.toString))
@@ -157,7 +155,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123")
-        ) // TODO check headers
+        )
     }
 
     def errorBody(code: String): String =

@@ -43,11 +43,15 @@ trait DownstreamStrategy {
 
 object DownstreamStrategy {
 
+  /** Creates a strategy instance that does not use any authentication.
+    * @param downstreamBaseUrl
+    *   the base URL for the downstream service
+    */
   def noAuthStrategy(downstreamBaseUrl: String): DownstreamStrategy = new DownstreamStrategy {
     override def baseUrl: String = downstreamBaseUrl
 
     override def contractHeaders(correlationId: String)(implicit ec: ExecutionContext): Future[Seq[(String, String)]] =
-      Future.successful(Seq("CorrelationId" -> correlationId))
+      Future.successful(Nil)
 
     override def environmentHeaders: Seq[String] = Nil
   }

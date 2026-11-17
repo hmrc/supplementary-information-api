@@ -34,8 +34,7 @@ class UpscanInitiateConnectorSpec extends ConnectorSpec {
   trait Test extends ConnectorTest {
 
     val requiredHeaders: Seq[(String, String)] = Seq(
-      "CorrelationId" -> correlationId,
-      "User-Agent"    -> "supplementary-information-api"
+      "User-Agent" -> "supplementary-information-api"
     )
 
     val connector = new UpscanInitiateConnector(mockHttpClient, mockAppConfig)
