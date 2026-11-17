@@ -22,7 +22,6 @@ case class MetadataRecordFailureRequestBody(uploadTimestamp: String, status: Str
 
 object MetadataRecordFailureRequestBody {
 
-  implicit val metadataRecordFailureRequestBodyFormat: OFormat[MetadataRecordFailureRequestBody] =
-    Json.format[MetadataRecordFailureRequestBody]
+  implicit val format: OFormat[MetadataRecordFailureRequestBody] = Json.format[MetadataRecordFailureRequestBody]
 
 }

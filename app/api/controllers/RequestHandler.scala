@@ -21,6 +21,7 @@ import api.config.Deprecation.HasDeprecationDates
 import api.controllers.validators.Validator
 import api.models.errors.{ErrorWrapper, InternalError}
 import api.models.outcomes.ResponseWrapper
+import api.models.request.ApiRequest
 import api.routing.{Version, Versions}
 import api.services.ServiceOutcome
 import api.utils.DateUtils.longDateTimestampGmt
@@ -36,7 +37,7 @@ import play.api.mvc.Results.InternalServerError
 import scala.concurrent.{ExecutionContext, Future}
 
 trait RequestHandler {
-  def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
+  def handleRequest()(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
 }
 
 object RequestHandler {
@@ -60,7 +61,7 @@ object RequestHandler {
       responseModifier: Option[Output => Output] = None
   ) extends RequestHandler {
 
-    def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
+    def handleRequest()(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
       Delegate.handleRequest()
 
     def withErrorHandling(errorHandling: ErrorHandling): RequestHandlerBuilder[Input, Output] =
@@ -93,19 +94,15 @@ object RequestHandler {
 
       implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Option[Version]) {
 
-        private def withDeprecationHeaders: List[(String, String)] =
-          apiVersion match {
-            case None => Nil
-            case Some(version) =>
-              appConfig.deprecationFor(version) match {
-                case Valid(deprecation: HasDeprecationDates) =>
-                  List(
-                    "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
-                    "Link"        -> appConfig.apiDocumentationUrl
-                  ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
-                case _ => Nil
-              }
+        private def withDeprecationHeaders: List[(String, String)] = apiVersion
+          .map(appConfig.deprecationFor)
+          .collect { case Valid(deprecation: HasDeprecationDates) =>
+            List(
+              "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
+              "Link"        -> appConfig.apiDocumentationUrl
+            ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
           }
+          .getOrElse(Nil)
 
         def withApiHeaders(correlationId: String, responseHeaders: (String, String)*): Result = {
 
@@ -124,7 +121,7 @@ object RequestHandler {
 
       def handleRequest()(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext,
           appConfig: AppConfig
       ): Future[Result] = {
@@ -156,7 +153,7 @@ object RequestHandler {
 
       private def handleSuccess(parsedRequest: Input, serviceResponse: ResponseWrapper[Output])(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext,
           appConfig: AppConfig): Result = {
 
@@ -175,7 +172,7 @@ object RequestHandler {
       }
 
       private def handleFailure(
-          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
+          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
 
         implicit val apiVersion: Option[Version] = Versions.getFromRequest(request).toOption
         logger.warn(
@@ -197,9 +194,9 @@ object RequestHandler {
 
       private def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext): Unit =
-        request.userDetails.foreach { userDetails =>
+        request.userDetailsOpt.foreach { userDetails =>
           auditHandler.foreach { creator =>
             creator.performAudit(userDetails, httpStatus, response)
           }

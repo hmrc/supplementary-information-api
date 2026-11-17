@@ -22,7 +22,5 @@ case class MetadataRecordSuccessRequestBody(scanId: String, uploadTimestamp: Str
 
 object MetadataRecordSuccessRequestBody {
 
-  implicit val metadataRecordSuccessBodyFormat: OFormat[MetadataRecordSuccessRequestBody] =
-    Json.format[MetadataRecordSuccessRequestBody]
-
+  implicit val format: OFormat[MetadataRecordSuccessRequestBody] = Json.format[MetadataRecordSuccessRequestBody]
 }

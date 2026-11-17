@@ -16,19 +16,7 @@
 
 package internal.upscanCallback.model
 
-import play.api.libs.json.{Json, OFormat, Reads, Writes}
-
-case class FailureDetails(
-    failureReason: String,
-    message: String
-)
-
-object FailureDetails {
-
-  implicit val failureDetailsFormat: OFormat[FailureDetails] =
-    Json.format[FailureDetails]
-
-}
+import play.api.libs.json.{Json, Reads}
 
 case class UpscanCallbackFailureRequestBody(
     reference: String,
@@ -38,7 +26,6 @@ case class UpscanCallbackFailureRequestBody(
 
 object UpscanCallbackFailureRequestBody {
 
-  implicit val reads: Reads[UpscanCallbackFailureRequestBody] =
-    Json.reads[UpscanCallbackFailureRequestBody]
+  implicit val reads: Reads[UpscanCallbackFailureRequestBody] = Json.reads[UpscanCallbackFailureRequestBody]
 
 }

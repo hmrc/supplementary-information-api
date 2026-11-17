@@ -16,22 +16,7 @@
 
 package internal.upscanCallback.model
 
-import play.api.libs.json.{Json, OFormat, Reads, Writes}
-
-case class UploadDetails(
-    fileName: String,
-    fileMimeType: String,
-    uploadTimestamp: String,
-    checksum: String,
-    size: Int
-)
-
-object UploadDetails {
-
-  implicit val uploadDetailsFormat: OFormat[UploadDetails] =
-    Json.format[UploadDetails]
-
-}
+import play.api.libs.json.{Json, Reads}
 
 case class UpscanCallbackSuccessRequestBody(
     reference: String,
@@ -42,7 +27,6 @@ case class UpscanCallbackSuccessRequestBody(
 
 object UpscanCallbackSuccessRequestBody {
 
-  implicit val reads: Reads[UpscanCallbackSuccessRequestBody] =
-    Json.reads[UpscanCallbackSuccessRequestBody]
+  implicit val reads: Reads[UpscanCallbackSuccessRequestBody] = Json.reads[UpscanCallbackSuccessRequestBody]
 
 }

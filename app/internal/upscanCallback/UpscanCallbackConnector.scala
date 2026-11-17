@@ -20,7 +20,7 @@ import api.config.AppConfig
 import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamUri}
-import api.utils.DateUtils.currentTimestamp
+import api.utils.DateUtils.nowAsUtc
 import internal.upscanCallback.model.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -29,32 +29,35 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UpscanCallbackConnector @Inject(val http: HttpClientV2, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class UpscanCallbackConnector @Inject() (val http: HttpClientV2, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def handleCallback(
-                      request: UpscanCallbackRequestData)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
+  def handleCallback(request: UpscanCallbackRequestData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
     val downstreamUri: DownstreamUri[Unit] = HipUri(s"itsd/attachment-metadata/${request.body.reference}")
 
     request.body match {
-      case successBody: UpscanCallbackSuccessRequestBody => handleSuccessCallback(downstreamUri, successBody)
-      case failureBody: UpscanCallbackFailureRequestBody => handleFailureCallback(downstreamUri, failureBody)
+      case successBody: UpscanCallbackSuccessRequestBody => patch(body = toSuccessMetadataRecordBody(successBody), uri = downstreamUri)
+      case failureBody: UpscanCallbackFailureRequestBody => patch(body = toFailureMetadataRecordBody(failureBody), uri = downstreamUri)
     }
   }
 
-  private def handleSuccessCallback(downstreamUri: DownstreamUri[Unit], callbackBody: UpscanCallbackSuccessRequestBody)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
-    import callbackBody.*
+  private def toSuccessMetadataRecordBody(callbackBody: UpscanCallbackSuccessRequestBody): MetadataRecordSuccessRequestBody =
+    MetadataRecordSuccessRequestBody(
+      scanId = callbackBody.downloadUrl,
+      uploadTimestamp = callbackBody.uploadDetails.uploadTimestamp,
+      fileName = callbackBody.uploadDetails.fileName,
+      fileSize = callbackBody.uploadDetails.size,
+      status = callbackBody.fileStatus
+    )
 
-    val body = MetadataRecordSuccessRequestBody(scanId = downloadUrl, uploadTimestamp = uploadDetails.uploadTimestamp, fileName = uploadDetails.fileName, fileSize = uploadDetails.size, status = fileStatus)
+  private def toFailureMetadataRecordBody(callbackBody: UpscanCallbackFailureRequestBody): MetadataRecordFailureRequestBody =
+    MetadataRecordFailureRequestBody(
+      uploadTimestamp = nowAsUtc,
+      status = callbackBody.fileStatus,
+      statusReason = callbackBody.failureDetails.failureReason
+    )
 
-    patch(body = body, uri = downstreamUri)
-  }
-
-  private def handleFailureCallback(downstreamUri: DownstreamUri[Unit], callbackBody: UpscanCallbackFailureRequestBody)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DownstreamOutcome[Unit]] = {
-    import callbackBody.*
-
-    val body = MetadataRecordFailureRequestBody(uploadTimestamp = currentTimestamp, status = fileStatus, statusReason = failureDetails.failureReason)
-
-    patch(body = body, uri = downstreamUri)
-  }
 }

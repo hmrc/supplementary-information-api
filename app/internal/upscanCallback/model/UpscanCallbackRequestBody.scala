@@ -16,7 +16,7 @@
 
 package internal.upscanCallback.model
 
-import play.api.libs.json.{JsError, JsSuccess, Reads, __}
+import play.api.libs.json.{JsError, Reads, __}
 
 trait UpscanCallbackRequestBody {
   val reference: String
@@ -24,13 +24,11 @@ trait UpscanCallbackRequestBody {
 
 object UpscanCallbackRequestBody {
 
-  implicit val reads: Reads[UpscanCallbackRequestBody] = { json =>
-    (__ \ "fileStatus").read[String].reads(json) match {
-      case JsSuccess("READY", _)  => json.validate[UpscanCallbackSuccessRequestBody]
-      case JsSuccess("FAILED", _) => json.validate[UpscanCallbackFailureRequestBody]
-      case JsSuccess(other, _)    => JsError(__ \ "fileStatus", s"Unknown fileStatus: $other")
-      case e: JsError             => e
+  implicit val reads: Reads[UpscanCallbackRequestBody] =
+    (__ \ "fileStatus").read[String].flatMap {
+      case "READY"  => Reads.of[UpscanCallbackSuccessRequestBody].widen
+      case "FAILED" => Reads.of[UpscanCallbackFailureRequestBody].widen
+      case other    => Reads(_ => JsError(__ \ "fileStatus", s"Unknown fileStatus: $other"))
     }
-  }
 
 }

@@ -23,6 +23,7 @@ import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDeta
 import api.models.auth.{UserDetails, UserType}
 import api.models.errors.{ErrorWrapper, InternalError, MtdError, NinoFormatError}
 import api.models.outcomes.ResponseWrapper
+import api.models.request.UserRequest
 import api.routing.{Version, Version1}
 import api.services.{MockAuditService, ServiceOutcome}
 import api.utils.DateUtils.longDateTimestampGmt
@@ -72,7 +73,7 @@ class RequestHandlerSpec
 
   implicit val userRequest: UserRequest[AnyContent] = {
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(versionHeader)
-    UserRequest[AnyContent](Some(userDetails), fakeRequest)
+    UserRequest[AnyContent](userDetails, fakeRequest)
   }
 
   implicit val appConfig: AppConfig = mockAppConfig

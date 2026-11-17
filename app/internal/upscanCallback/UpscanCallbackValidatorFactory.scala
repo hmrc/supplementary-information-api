@@ -20,13 +20,11 @@ import api.controllers.validators.Validator
 import internal.upscanCallback.model.UpscanCallbackRequestData
 import play.api.libs.json.JsValue
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
-class UpscanCallbackValidatorFactory @Inject() {
+class UpscanCallbackValidatorFactory {
 
-  def validator(body: JsValue): Validator[UpscanCallbackRequestData] = {
-    new UpscanCallbackValidator(body)
-  }
+  def validator(body: JsValue): Validator[UpscanCallbackRequestData] = new UpscanCallbackValidator(body)
 
 }

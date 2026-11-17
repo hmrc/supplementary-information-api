@@ -18,33 +18,32 @@ package internal.upscanCallback
 
 import api.config.AppConfig
 import api.controllers.*
-import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import api.models.request.UnauthenticatedRequest
 import api.utils.IdGenerator
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.*
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UpscanCallbackController @Inject() (val authService: EnrolmentsAuthService,
-                                          val lookupService: MtdIdLookupService,
-                                          val validatorFactory: UpscanCallbackValidatorFactory,
+class UpscanCallbackController @Inject() (val validatorFactory: UpscanCallbackValidatorFactory,
                                           val service: UpscanCallbackService,
-                                          val connector: UpscanCallbackConnector,
                                           cc: ControllerComponents,
                                           val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
-    extends AuthorisedController(cc) {
+    extends BackendController(cc) {
 
   val endpointName = "upscan-callback"
 
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "UpscanCallbackController", endpointName = "Upscan Callback")
+    EndpointLogContext(controllerName = "UpscanCallbackController", endpointName = endpointName)
 
   def handleCallback(): Action[JsValue] = {
     Action.async(parse.json) { implicit request =>
-      implicit val userRequest: UserRequest[JsValue] = UserRequest(None, request)
-      implicit val ctx: RequestContext               = RequestContext.from(idGenerator, endpointLogContext)
+
+      implicit val unauthenticatedRequest: UnauthenticatedRequest[JsValue] = UnauthenticatedRequest(request)
+      implicit val ctx: RequestContext                                     = RequestContext.from(idGenerator, endpointLogContext)
 
       val validator = validatorFactory.validator(request.body)
 
@@ -52,7 +51,6 @@ class UpscanCallbackController @Inject() (val authService: EnrolmentsAuthService
         RequestHandler
           .withValidator(validator)
           .withService(service.handleCallback)
-          .withNoContentResult()
 
       requestHandler.handleRequest()
     }
