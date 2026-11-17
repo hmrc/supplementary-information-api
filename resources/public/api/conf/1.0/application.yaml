@@ -55,7 +55,6 @@ tags:
     description: These endpoints allow a user to create, amend, retrieve and delete supplementary information for a given tax year.
   {{#if (enabled "r23_upload_docs")}}
   - name: Supplementary Document Upload
-    description: These endpoints allow a user to upload a supplementary document for a given tax year.
   {{/if}}
 
 paths:
