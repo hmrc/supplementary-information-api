@@ -17,6 +17,7 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.connectors.DownstreamOutcome
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
@@ -29,7 +30,7 @@ import scala.concurrent.Future
 class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with MockUpscanInitiateConnector {
 
   private val requestData =
-    InitiateSupplementaryDocumentUploadRequestData(Nino("AA123456A"), TaxYear.fromMtd("2026-27"), None)
+    InitiateSupplementaryDocumentUploadRequestData(Nino("AA123456A"), TaxYear.fromMtd("2026-27"), UserType.Individual, None)
 
   private val response = InitiateSupplementaryDocumentUploadResponse(
     documentId = "document-id",

@@ -45,7 +45,7 @@ class InitiateSupplementaryDocumentUploadController @Inject() (
 
   def initiate(nino: String, taxYear: String): Action[AnyContent] = authorisedAction(nino).async { implicit request =>
     implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
-    val validator                    = validatorFactory.validator(nino, taxYear, request.body.asJson)
+    val validator                    = validatorFactory.validator(nino, taxYear, request.userDetails.userType, request.body.asJson)
 
     val requestHandler = RequestHandler
       .withValidator(validator)

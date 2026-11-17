@@ -16,10 +16,12 @@
 
 package v1.initiateSupplementaryDocumentUpload.model.request
 
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 
 case class InitiateSupplementaryDocumentUploadRequestData(
     nino: Nino,
     taxYear: TaxYear,
+    userType: UserType,
     body: Option[InitiateSupplementaryDocumentUploadRequestBody]
 )

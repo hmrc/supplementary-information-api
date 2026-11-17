@@ -16,6 +16,7 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.*
 import api.utils.UnitSpec
@@ -38,7 +39,7 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
   )
 
   private def validator(nino: String = nino, taxYear: String = taxYear, body: Option[JsValue] = Some(validBody)) =
-    new InitiateSupplementaryDocumentUploadValidator(nino, taxYear, body).validateAndWrapResult()
+    new InitiateSupplementaryDocumentUploadValidator(nino, taxYear, UserType.Individual, body).validateAndWrapResult()
 
   private def error(mtdError: MtdError) = Left(ErrorWrapper(correlationId, mtdError))
 
@@ -49,6 +50,7 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
           InitiateSupplementaryDocumentUploadRequestData(
             Nino(nino),
             TaxYear.fromMtd(taxYear),
+            UserType.Individual,
             Some(
               InitiateSupplementaryDocumentUploadRequestBody(
                 Some("https://example.com/success"),
@@ -60,12 +62,12 @@ class InitiateSupplementaryDocumentUploadValidatorSpec extends UnitSpec {
       }
       "body is not present" in {
         validator(body = None) shouldBe Right(
-          InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), None)
+          InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), UserType.Individual, None)
         )
       }
       "body is empty" in {
         validator(body = Some(Json.obj())) shouldBe Right(
-          InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), None)
+          InitiateSupplementaryDocumentUploadRequestData(Nino(nino), TaxYear.fromMtd(taxYear), UserType.Individual, None)
         )
       }
       Seq("successRedirect", "errorRedirect").foreach { field =>

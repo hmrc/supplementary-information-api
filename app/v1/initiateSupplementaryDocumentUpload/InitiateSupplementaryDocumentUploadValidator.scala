@@ -18,6 +18,7 @@ package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveJsonObject, ResolveNino}
+import api.models.auth.UserType
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
@@ -26,7 +27,7 @@ import play.api.libs.json.{JsObject, JsValue}
 import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadRulesValidator.validateBusinessRules
 import v1.initiateSupplementaryDocumentUpload.model.request.*
 
-class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String, body: Option[JsValue])
+class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String, userType: UserType, body: Option[JsValue])
     extends Validator[InitiateSupplementaryDocumentUploadRequestData] {
 
   private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
@@ -44,7 +45,7 @@ class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String
       ResolveNino(nino),
       resolveTaxYear(taxYear),
       body.map(resolveJson).getOrElse(Validated.Valid(None))
-    ).mapN((nino, taxYear, body) => InitiateSupplementaryDocumentUploadRequestData(nino, taxYear, body)) andThen
+    ).mapN((nino, taxYear, body) => InitiateSupplementaryDocumentUploadRequestData(nino, taxYear, userType, body)) andThen
       validateBusinessRules
 
 }

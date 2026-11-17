@@ -16,6 +16,7 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import play.api.libs.json.{JsObject, Json}
 import v1.initiateSupplementaryDocumentUpload.model.*
@@ -72,6 +73,7 @@ object InitiateSupplementaryDocumentUploadFixtures {
     InitiateSupplementaryDocumentUploadRequestData(
       nino = Nino("AA123456A"),
       taxYear = TaxYear.fromMtd("2026-27"),
+      userType = UserType.Individual,
       body = Some(requestBodyModel)
     )
 

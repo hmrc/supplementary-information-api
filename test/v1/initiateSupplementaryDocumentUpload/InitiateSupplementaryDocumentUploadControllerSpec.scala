@@ -18,6 +18,7 @@ package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.ControllerTestRunner
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{ErrorWrapper, InternalError, RedirectUrlFormatError}
 import api.models.outcomes.ResponseWrapper
@@ -34,8 +35,10 @@ class InitiateSupplementaryDocumentUploadControllerSpec
     with MockInitiateSupplementaryDocumentUploadService
     with MockInitiateSupplementaryDocumentUploadValidatorFactory {
 
-  private val taxYear     = "2026-27"
-  private val requestData = InitiateSupplementaryDocumentUploadRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), Some(requestBodyModel))
+  private val taxYear = "2026-27"
+
+  private val requestData =
+    InitiateSupplementaryDocumentUploadRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), UserType.Individual, Some(requestBodyModel))
 
   "InitiateSupplementaryDocumentUploadController" should {
     "return 201 (CREATED) with the response body" when {
@@ -89,7 +92,7 @@ class InitiateSupplementaryDocumentUploadControllerSpec
         auditType = "InitiateSupplementaryDocumentUpload",
         transactionName = "initiate-supplementary-document-upload",
         detail = GenericAuditDetail(
-          userType = "Individual",
+          userType = UserType.Individual,
           agentReferenceNumber = None,
           versionNumber = apiVersion.name,
           params = Map("nino" -> validNino, "taxYear" -> taxYear),
