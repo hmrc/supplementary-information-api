@@ -17,7 +17,7 @@
 package api.services
 
 import api.config.AppConfig
-import api.models.auth.UserDetails
+import api.models.auth.{UserDetails, UserType}
 import api.models.errors.{InternalError, *}
 import api.models.outcomes.AuthOutcome
 import api.services.EnrolmentsAuthService.{authorisationDisabledPredicate, authorisationEnabledPredicate}
@@ -56,21 +56,21 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
       .authorised(initialPredicate(mtdId))
       .retrieve(affinityGroup and authorisedEnrolments) {
         case Some(Individual) ~ _ =>
-          Future.successful(Right(UserDetails(mtdId, "Individual", None)))
+          Future.successful(Right(UserDetails(mtdId, UserType.Individual, None)))
 
         case Some(Organisation) ~ _ =>
-          Future.successful(Right(UserDetails(mtdId, "Organisation", None)))
+          Future.successful(Right(UserDetails(mtdId, UserType.Organisation, None)))
 
         case Some(Agent) ~ authorisedEnrolments =>
           authFunction
             .authorised(EnrolmentsAuthService.mtdEnrolmentPredicate(mtdId)) {
-              Future.successful(agentDetails(mtdId, "Agent", authorisedEnrolments))
+              Future.successful(agentDetails(mtdId, UserType.Agent, authorisedEnrolments))
             }
             .recoverWith {
               case _: AuthorisationException if endpointAllowsSupportingAgents =>
                 authFunction
                   .authorised(EnrolmentsAuthService.supportingAgentAuthPredicate(mtdId)) {
-                    Future.successful(agentDetails(mtdId, "Supporting Agent", authorisedEnrolments))
+                    Future.successful(agentDetails(mtdId, UserType.SupportingAgent, authorisedEnrolments))
                   }
             }
 
@@ -87,7 +87,7 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
       }
   }
 
-  private def agentDetails(mtdId: String, agentType: String, authorisedEnrolments: Enrolments): Either[MtdError, UserDetails] =
+  private def agentDetails(mtdId: String, agentType: UserType, authorisedEnrolments: Enrolments): Either[MtdError, UserDetails] =
     (
       for {
         enrolment  <- authorisedEnrolments.getEnrolment("HMRC-AS-AGENT")

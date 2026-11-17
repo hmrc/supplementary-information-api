@@ -16,7 +16,7 @@
 
 package api.services
 
-import api.models.auth.UserDetails
+import api.models.auth.{UserDetails, UserType}
 import api.models.outcomes.AuthOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
@@ -35,7 +35,7 @@ trait MockEnrolmentsAuthService extends TestSuite with MockFactory {
       (mockEnrolmentsAuthService
         .authorised(_: String, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *, *)
-        .returns(Future.successful(Right(UserDetails("mtd-id", "Individual", None))))
+        .returns(Future.successful(Right(UserDetails("mtd-id", UserType.Individual, None))))
     }
 
     def authoriseAgent(mtdId: String, supportingAgentAccessAllowed: Boolean = false): CallHandler[Future[AuthOutcome]] = {
