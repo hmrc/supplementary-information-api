@@ -23,6 +23,7 @@ import internal.upscanCallback.UpscanCallbackFixtures.{failureRequestBody, succe
 import internal.upscanCallback.model.*
 import uk.gov.hmrc.http.StringContextOps
 
+import java.time.{Clock, Instant, ZoneOffset}
 import scala.concurrent.Future
 
 class UpscanCallbackConnectorSpec extends ConnectorSpec {
@@ -59,12 +60,14 @@ class UpscanCallbackConnectorSpec extends ConnectorSpec {
     "handle failure callback" when {
       "file status is FAILED" in new HipTest with Test {
 
+        private implicit val clock: Clock = Clock.fixed(Instant.now, ZoneOffset.UTC)
+
         val failureBody: UpscanCallbackFailureRequestBody = failureRequestBody
 
         val requestData = UpscanCallbackRequestData(body = failureBody)
 
         val expectedBody = MetadataRecordFailureRequestBody(
-          uploadTimestamp = nowAsUtc,
+          uploadTimestamp = nowAsUtc(clock),
           status = "failed",
           statusReason = "QUARANTINE"
         )

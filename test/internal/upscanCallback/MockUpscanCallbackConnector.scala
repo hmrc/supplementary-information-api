@@ -23,6 +23,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.Clock
 import scala.concurrent.{ExecutionContext, Future}
 
 class MockUpscanCallbackConnector extends TestSuite with MockFactory {
@@ -33,8 +34,8 @@ class MockUpscanCallbackConnector extends TestSuite with MockFactory {
 
     def handleCallback(upscanCallbackRequestData: UpscanCallbackRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (mockUpscanCallbackConnector
-        .handleCallback(_: UpscanCallbackRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String))
-        .expects(upscanCallbackRequestData, *, *, *)
+        .handleCallback(_: UpscanCallbackRequestData)(_: HeaderCarrier, _: ExecutionContext, _: String, _: Clock))
+        .expects(upscanCallbackRequestData, *, *, *, *)
     }
 
   }

@@ -25,6 +25,7 @@ import internal.upscanCallback.model.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 
+import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,7 +35,8 @@ class UpscanCallbackConnector @Inject() (val http: HttpClientV2, val appConfig: 
   def handleCallback(request: UpscanCallbackRequestData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      correlationId: String,
+      clock: Clock = Clock.systemUTC()): Future[DownstreamOutcome[Unit]] = {
 
     val downstreamUri: DownstreamUri[Unit] = HipUri(s"itsd/attachment-metadata/${request.body.reference}")
 
@@ -53,9 +55,9 @@ class UpscanCallbackConnector @Inject() (val http: HttpClientV2, val appConfig: 
       status = "requested"
     )
 
-  private def toFailureMetadataRecordBody(callbackBody: UpscanCallbackFailureRequestBody): MetadataRecordFailureRequestBody =
+  private def toFailureMetadataRecordBody(callbackBody: UpscanCallbackFailureRequestBody)(implicit clock: Clock): MetadataRecordFailureRequestBody =
     MetadataRecordFailureRequestBody(
-      uploadTimestamp = nowAsUtc,
+      uploadTimestamp = nowAsUtc(clock),
       status = "failed",
       statusReason = callbackBody.failureDetails.failureReason
     )
