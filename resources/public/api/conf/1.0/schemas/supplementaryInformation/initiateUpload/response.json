@@ -16,7 +16,6 @@
           "type": "string",
           "format": "uri",
           "description": "The url used to upload a document.",
-          "pattern": "^https://\\w+(\\.\\w+)+.*$",
           "example": "https://xxxx/upscan-upload-proxy/bucketName"
         },
         "fields": {
