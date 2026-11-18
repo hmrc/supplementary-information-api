@@ -8,7 +8,7 @@ description: |
   | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
   |----------------------------------|-------------------------------------------------------------------------------------------------|
   | N/A - DEFAULT                    | Simulates success response.                                                                     |
-  | STATEFUL                         | Performs a stateful retrieve.                                                                   |
+  | STATEFUL                         | Performs a stateful initiate.                                                                   |
 
 tags:
   - Supplementary Document Upload
