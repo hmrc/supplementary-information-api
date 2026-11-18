@@ -109,6 +109,32 @@ trait MockHttpClient extends TestSuite with MockFactory {
         .expects(*, *)
     }
 
+    def patch[T](url: URL,
+                 config: HeaderCarrier.Config,
+                 body: JsValue,
+                 requiredHeaders: Seq[(String, String)] = Seq.empty,
+                 excludedHeaders: Seq[(String, String)] = Seq.empty): CallHandler[Future[T]] = {
+      (mockHttpClient
+        .patch(_: URL)(_: HeaderCarrier))
+        .expects(assertArgs { (actualUrl: URL, hc: HeaderCarrier) =>
+          {
+            actualUrl shouldBe url
+
+            val headersForUrl = hc.headersForUrl(config)(actualUrl.toString)
+            assertHeaders(headersForUrl, requiredHeaders, excludedHeaders)
+          }
+        })
+        .returns(mockRequestBuilder)
+
+      (mockRequestBuilder
+        .withBody(_: JsValue)(using _: BodyWritable[JsValue], _: Tag[JsValue], _: ExecutionContext))
+        .expects(body, *, *, *)
+        .returns(mockRequestBuilder)
+      (mockRequestBuilder
+        .execute[T](using _: HttpReads[T], _: ExecutionContext))
+        .expects(*, *)
+    }
+
     def delete[T](url: URL,
                   config: HeaderCarrier.Config,
                   requiredHeaders: Seq[(String, String)] = Seq.empty,

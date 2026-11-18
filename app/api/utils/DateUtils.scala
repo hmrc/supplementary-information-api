@@ -17,7 +17,7 @@
 package api.utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
+import java.time.{Clock, LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.Locale
 
 object DateUtils {
@@ -30,5 +30,5 @@ object DateUtils {
 
   private val timestampFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-  def nowAsUtc: String = ZonedDateTime.now(ZoneId.of("UTC")).format(timestampFormatter)
+  def nowAsUtc(implicit clock: Clock = Clock.systemUTC): String = ZonedDateTime.now(clock).format(timestampFormatter)
 }

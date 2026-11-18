@@ -91,6 +91,17 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
         )
     }
 
+    protected def willPatch[BODY, T](url: URL, body: BODY)(implicit writes: Writes[BODY]): CallHandler[Future[T]] = {
+      MockedHttpClient
+        .patch(
+          url = url,
+          config = dummyHeaderCarrierConfig,
+          body = Json.toJson(body),
+          requiredHeaders = requiredHeaders ++ List("Content-Type" -> "application/json"),
+          excludedHeaders = List("AnotherHeader" -> "HeaderValue")
+        )
+    }
+
     protected def willDelete[T](url: URL): CallHandler[Future[T]] = {
       MockedHttpClient
         .delete(

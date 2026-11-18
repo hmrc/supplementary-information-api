@@ -50,13 +50,13 @@ class UpscanCallbackConnector @Inject() (val http: HttpClientV2, val appConfig: 
       uploadTimestamp = callbackBody.uploadDetails.uploadTimestamp,
       fileName = callbackBody.uploadDetails.fileName,
       fileSize = callbackBody.uploadDetails.size,
-      status = callbackBody.fileStatus
+      status = "requested"
     )
 
   private def toFailureMetadataRecordBody(callbackBody: UpscanCallbackFailureRequestBody): MetadataRecordFailureRequestBody =
     MetadataRecordFailureRequestBody(
       uploadTimestamp = nowAsUtc,
-      status = callbackBody.fileStatus,
+      status = "failed",
       statusReason = callbackBody.failureDetails.failureReason
     )
 
