@@ -17,7 +17,14 @@ parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
   - $ref: './common/headers.yaml#/components/parameters/acceptHeader'
-  - $ref: './common/headers.yaml#/components/parameters/contentTypeJson'
+  - name: "Content-Type"
+    in: header
+    description: |
+      Specifies the format of the request body, which must be JSON if a request body is provided.
+    schema:
+      type: string
+      enum:
+        - "application/json"
   - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
@@ -32,6 +39,7 @@ requestBody:
         $ref: './schemas/supplementaryInformation/initiateUpload/request.json'
       example:
         $ref: './examples/supplementaryInformation/initiateUpload/request.json'
+  required: false
 
 responses:
   "201":
