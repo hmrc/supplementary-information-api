@@ -16,7 +16,7 @@
 
 package api.utils
 
-import java.time.LocalDateTime
+import java.time.{Clock, Instant, LocalDateTime, ZoneOffset}
 
 class DateUtilsSpec extends UnitSpec {
 
@@ -28,6 +28,18 @@ class DateUtilsSpec extends UnitSpec {
         )
         result shouldBe "Tue, 17 Jan 2023 12:00:00 GMT"
       }
+    }
+  }
+
+  "nowAsUtc" should {
+    "return the current timestamp in UTC format" in {
+      implicit val clock: Clock =
+        Clock.fixed(
+          Instant.parse("2026-11-18T10:30:45.123Z"),
+          ZoneOffset.UTC
+        )
+
+      DateUtils.nowAsUtc shouldBe "2026-11-18T10:30:45.123Z"
     }
   }
 
