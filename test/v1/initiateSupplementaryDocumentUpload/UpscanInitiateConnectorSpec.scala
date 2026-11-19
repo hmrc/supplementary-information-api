@@ -27,9 +27,9 @@ import scala.concurrent.Future
 
 class UpscanInitiateConnectorSpec extends ConnectorSpec {
 
-  private val downstreamUrl            = url"$baseUrl/upscan/v2/initiate"
-  private val upscallCallbackUrl       = "https://callback"
-  private val upscallMaxFileSize: Long = 5242880
+  private val downstreamUrl     = url"$baseUrl/upscan/v2/initiate"
+  private val upscanCallbackUrl = "https://callback"
+  private val upscanMaxFileSize = 5242880
 
   trait Test extends ConnectorTest {
 
@@ -40,8 +40,8 @@ class UpscanInitiateConnectorSpec extends ConnectorSpec {
     val connector = new UpscanInitiateConnector(mockHttpClient, mockAppConfig)
 
     MockedAppConfig.upscanInitiateBaseUrl.returns(baseUrl)
-    MockedAppConfig.upscanCallbackUrl.returns(upscallCallbackUrl)
-    MockedAppConfig.upscanMaxFileSize.returns(upscallMaxFileSize)
+    MockedAppConfig.upscanCallbackUrl.returns(upscanCallbackUrl)
+    MockedAppConfig.upscanMaxFileSize.returns(upscanMaxFileSize)
   }
 
   "UpscanInitiateConnector" should {
