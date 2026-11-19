@@ -34,7 +34,7 @@ class InitiateSupplementaryDocumentUploadService @Inject() (connector: UpscanIni
       ec: ExecutionContext): Future[ServiceOutcome[InitiateSupplementaryDocumentUploadResponse]] =
     connector
       .upscanInitiate(request)
-      .map(_.map(_.copy(correlationId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"))) // TODO: Use ITSD correlation ID
+//      .map(_.map(_.copy(correlationId = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"))) // TODO: Use ITSD correlation ID
       .map(_.leftMap(mapDownstreamErrors(Map.empty)))
 
 }

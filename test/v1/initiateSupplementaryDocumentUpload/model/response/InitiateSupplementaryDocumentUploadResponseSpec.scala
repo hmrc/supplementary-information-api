@@ -46,4 +46,5 @@ class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
       }
     }
   }
+
 }
