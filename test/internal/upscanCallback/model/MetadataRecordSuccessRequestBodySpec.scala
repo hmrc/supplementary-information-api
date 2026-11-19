@@ -25,7 +25,7 @@ class MetadataRecordSuccessRequestBodySpec extends UnitSpec {
     """
       |{
       |  "scanId": "https://bucketName.s3.eu-west-2.amazonaws.com?1235676",
-      |  "uploadTimestamp": "2026-11-18T00:00:00Z",
+      |  "uploadTimestamp": "2026-11-19T14:49:55.260Z",
       |  "fileName": "metadata.pdf",
       |  "fileSize": 1024,
       |  "status": "requested"
@@ -48,7 +48,7 @@ class MetadataRecordSuccessRequestBodySpec extends UnitSpec {
   val metadataRecordSuccessRequestBody: MetadataRecordSuccessRequestBody =
     MetadataRecordSuccessRequestBody(
       scanId = "https://bucketName.s3.eu-west-2.amazonaws.com?1235676",
-      uploadTimestamp = "2026-11-18T00:00:00Z",
+      uploadTimestamp = "2026-11-19T14:49:55.260Z",
       fileName = "metadata.pdf",
       fileSize = 1024,
       status = "requested"

@@ -53,14 +53,6 @@ class UpscanCallbackControllerISpec extends IntegrationBaseSpec {
     "return error according to spec" when {
       "validation error" when {
         "validation fails with RuleIncorrectOrEmptyBodyError error" in new Test {
-          override def setupStubs(): StubMapping = {
-            DownstreamStub.onSuccess(
-              method = DownstreamStub.PATCH,
-              uri = downstreamUri,
-              status = NO_CONTENT,
-              body = JsObject.empty
-            )
-          }
 
           val response: WSResponse = await(request().post(JsObject.empty))
           response.status shouldBe BAD_REQUEST
@@ -103,7 +95,7 @@ class UpscanCallbackControllerISpec extends IntegrationBaseSpec {
   private trait Test {
     private val reference: String = "11370e18-6e24-453e-b45a-76d3e32ea33d"
 
-    def setupStubs(): StubMapping
+    def setupStubs(): StubMapping = StubMapping.NOT_CONFIGURED
 
     private def mtdUri: String = s"/upscan-callback"
 

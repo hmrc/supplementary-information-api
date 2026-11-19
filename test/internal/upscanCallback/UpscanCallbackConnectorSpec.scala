@@ -40,12 +40,11 @@ class UpscanCallbackConnectorSpec extends ConnectorSpec {
     "handle successful callback" when {
       "file status is READY" in new HipTest with Test {
 
-        val successBody: UpscanCallbackSuccessRequestBody = successRequestBody
-        val requestData                                   = UpscanCallbackRequestData(body = successBody)
+        val requestData = UpscanCallbackRequestData(body = successRequestBody)
 
         val expectedBody = MetadataRecordSuccessRequestBody(
           scanId = "https://bucketName.s3.eu-west-2.amazonaws.com?1235676",
-          uploadTimestamp = "2026-11-18T00:00:00Z",
+          uploadTimestamp = "2026-11-19T14:49:55.260Z",
           fileName = "test.pdf",
           fileSize = 1024,
           status = "requested"
@@ -62,9 +61,7 @@ class UpscanCallbackConnectorSpec extends ConnectorSpec {
 
         private implicit val clock: Clock = Clock.fixed(Instant.now, ZoneOffset.UTC)
 
-        val failureBody: UpscanCallbackFailureRequestBody = failureRequestBody
-
-        val requestData = UpscanCallbackRequestData(body = failureBody)
+        val requestData = UpscanCallbackRequestData(body = failureRequestBody)
 
         val expectedBody = MetadataRecordFailureRequestBody(
           uploadTimestamp = nowAsUtc(clock),

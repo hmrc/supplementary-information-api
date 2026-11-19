@@ -17,13 +17,12 @@
 package internal.upscanCallback
 
 import api.models.errors.*
-import api.models.utils.JsonErrorValidators
 import api.utils.UnitSpec
 import internal.upscanCallback.UpscanCallbackFixtures.{failureJson, failureRequestBody, successJson, successRequestBody}
 import internal.upscanCallback.model.*
 import play.api.libs.json.*
 
-class UpscanCallbackValidatorSpec extends UnitSpec with JsonErrorValidators {
+class UpscanCallbackValidatorFactorySpec extends UnitSpec {
 
   private implicit val correlationId: String = "someCorrelationId"
 
@@ -35,10 +34,8 @@ class UpscanCallbackValidatorSpec extends UnitSpec with JsonErrorValidators {
   private def error(mtdError: MtdError) =
     Left(ErrorWrapper(correlationId, mtdError))
 
-  "UpscanCallbackValidator" should {
-
-    "return the parsed object" when {
-
+  "UpscanCallbackValidatorFactory" should {
+    "validator" when {
       "a valid READY callback request is supplied" in {
         validate(successJson) shouldBe Right(
           UpscanCallbackRequestData(successRequestBody)
@@ -53,7 +50,6 @@ class UpscanCallbackValidatorSpec extends UnitSpec with JsonErrorValidators {
     }
 
     "return a RuleIncorrectOrEmptyBodyError" when {
-
       "an empty JSON body is submitted" in {
         validate(JsObject.empty) shouldBe error(RuleIncorrectOrEmptyBodyError)
       }

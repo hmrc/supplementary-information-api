@@ -28,10 +28,10 @@ import javax.inject.*
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UpscanCallbackController @Inject() (val validatorFactory: UpscanCallbackValidatorFactory,
-                                          val service: UpscanCallbackService,
+class UpscanCallbackController @Inject() (validatorFactory: UpscanCallbackValidatorFactory,
+                                          service: UpscanCallbackService,
                                           cc: ControllerComponents,
-                                          val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                          idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends BackendController(cc) {
 
   val endpointName = "upscan-callback"
@@ -39,21 +39,19 @@ class UpscanCallbackController @Inject() (val validatorFactory: UpscanCallbackVa
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "UpscanCallbackController", endpointName = endpointName)
 
-  def handleCallback(): Action[JsValue] = {
-    Action.async(parse.json) { implicit request =>
+  def handleCallback(): Action[JsValue] = Action.async(parse.json) { implicit request =>
 
-      implicit val unauthenticatedRequest: UnauthenticatedRequest[JsValue] = UnauthenticatedRequest(request)
-      implicit val ctx: RequestContext                                     = RequestContext.from(idGenerator, endpointLogContext)
+    implicit val unauthenticatedRequest: UnauthenticatedRequest[JsValue] = UnauthenticatedRequest(request)
+    implicit val ctx: RequestContext                                     = RequestContext.from(idGenerator, endpointLogContext)
 
-      val validator = validatorFactory.validator(request.body)
+    val validator = validatorFactory.validator(request.body)
 
-      val requestHandler =
-        RequestHandler
-          .withValidator(validator)
-          .withService(service.handleCallback)
+    val requestHandler =
+      RequestHandler
+        .withValidator(validator)
+        .withService(service.handleCallback)
 
-      requestHandler.handleRequest()
-    }
+    requestHandler.handleRequest()
   }
 
 }

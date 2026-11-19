@@ -21,6 +21,7 @@ import api.models.errors.{ErrorWrapper, InternalError, RuleIncorrectOrEmptyBodyE
 import api.models.outcomes.ResponseWrapper
 import internal.upscanCallback.UpscanCallbackFixtures.{successJson, successRequestData}
 import play.api.mvc.Result
+import play.api.test.FakeRequest
 import play.test.Helpers.POST
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -66,7 +67,7 @@ class UpscanCallbackControllerSpec extends ControllerTestRunner with MockUpscanC
       )
 
     protected def callController(): Future[Result] =
-      controller.handleCallback()(fakeRequest.withBody(successJson).withMethod(POST))
+      controller.handleCallback()(FakeRequest().withBody(successJson).withMethod(POST))
 
   }
 

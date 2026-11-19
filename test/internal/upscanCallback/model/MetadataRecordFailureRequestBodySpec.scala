@@ -24,7 +24,7 @@ class MetadataRecordFailureRequestBodySpec extends UnitSpec {
   val json: JsValue = Json.parse(
     """
       |{
-      |  "uploadTimestamp": "2026-11-18T00:00:00Z",
+      |  "uploadTimestamp": "2026-11-19T14:49:55.260Z",
       |  "status": "failed",
       |  "statusReason": "This file has a virus"
       |}
@@ -43,7 +43,7 @@ class MetadataRecordFailureRequestBodySpec extends UnitSpec {
 
   val metadataRecordFailureRequestBody: MetadataRecordFailureRequestBody =
     MetadataRecordFailureRequestBody(
-      uploadTimestamp = "2026-11-18T00:00:00Z",
+      uploadTimestamp = "2026-11-19T14:49:55.260Z",
       status = "failed",
       statusReason = "This file has a virus"
     )

@@ -143,11 +143,6 @@ trait ControllerTestRunner
 
     MockedIdGenerator.generateCorrelationId.returns(correlationId)
 
-    MockedAppConfig
-      .deprecationFor(apiVersion)
-      .returns(NotDeprecated.valid)
-      .anyNumberOfTimes()
-
     protected def runOkTest(
         expectedStatus: Int,
         maybeExpectedResponseBody: Option[JsValue] = None
@@ -169,17 +164,6 @@ trait ControllerTestRunner
       status(result) shouldBe expectedError.httpStatus
       header("X-CorrelationId", result) shouldBe Some(correlationId)
 
-      contentAsJson(result) shouldBe Json.toJson(expectedError)
-    }
-
-    protected def runMultipleErrorsTest(expectedErrors: Seq[MtdError]): Unit = {
-      val expectedError =
-        ErrorWrapper(correlationId, BadRequestError, Some(expectedErrors))
-
-      val result: Future[Result] = callController()
-
-      status(result) shouldBe BAD_REQUEST
-      header("X-CorrelationId", result) shouldBe Some(correlationId)
       contentAsJson(result) shouldBe Json.toJson(expectedError)
     }
 

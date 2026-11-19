@@ -26,7 +26,7 @@ class UploadDetailsSpec extends UnitSpec {
       |{
       |  "fileName": "test.pdf",
       |  "fileMimeType": "application/pdf",
-      |  "uploadTimestamp": "2026-11-18T00:00:00Z",
+      |  "uploadTimestamp": "2026-11-19T14:49:55.260Z",
       |  "checksum": "396f101dd52e8b2ace0dcf5ed09b1d1f030e608938510ce46e7a5c7a4e775100",
       |  "size": 1024
       |}
@@ -48,7 +48,7 @@ class UploadDetailsSpec extends UnitSpec {
   val uploadDetails: UploadDetails = UploadDetails(
     fileName = "test.pdf",
     fileMimeType = "application/pdf",
-    uploadTimestamp = "2026-11-18T00:00:00Z",
+    uploadTimestamp = "2026-11-19T14:49:55.260Z",
     checksum = "396f101dd52e8b2ace0dcf5ed09b1d1f030e608938510ce46e7a5c7a4e775100",
     size = 1024
   )
