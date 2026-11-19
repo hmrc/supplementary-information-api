@@ -26,6 +26,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import play.test.Helpers.PUT
 import CreateAmendSupplementaryInformationFixtures.*
+import api.models.auth.UserType
 import v1.createAmendSupplementaryInformation.model.request.CreateAmendSupplementaryInformationRequestData
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -73,7 +74,7 @@ class CreateAmendSupplementaryInformationControllerSpec
         auditType = "CreateAmendSupplementaryInformation",
         transactionName = "create-amend-supplementary-information",
         detail = GenericAuditDetail(
-          userType = "Individual",
+          userType = UserType.Individual,
           versionNumber = apiVersion.name,
           agentReferenceNumber = None,
           params = Map("nino" -> validNino, "taxYear" -> taxYear),

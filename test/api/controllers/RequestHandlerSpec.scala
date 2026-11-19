@@ -20,7 +20,7 @@ import api.config.Deprecation.*
 import api.config.{AppConfig, Deprecation, MockAppConfig}
 import api.controllers.validators.Validator
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
-import api.models.auth.UserDetails
+import api.models.auth.{UserDetails, UserType}
 import api.models.errors.{ErrorWrapper, InternalError, MtdError, NinoFormatError}
 import api.models.outcomes.ResponseWrapper
 import api.routing.{Version, Version1}
@@ -68,7 +68,7 @@ class RequestHandlerSpec
   implicit val hc: HeaderCarrier   = HeaderCarrier()
   implicit val ctx: RequestContext = RequestContext.from(mockIdGenerator, endpointLogContext)
 
-  private val userDetails = UserDetails("mtdId", "Individual", Some("agentReferenceNumber"))
+  private val userDetails = UserDetails("mtdId", UserType.Individual, Some("agentReferenceNumber"))
 
   implicit val userRequest: UserRequest[AnyContent] = {
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(versionHeader)

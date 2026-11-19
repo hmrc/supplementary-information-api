@@ -18,6 +18,7 @@ package api.controllers
 
 import api.config.MockAppConfig
 import api.models.auth.UserDetails
+import api.models.auth.UserType.Agent
 import api.models.errors.*
 import api.services.{EnrolmentsAuthService, MockEnrolmentsAuthService, MockMtdIdLookupService, MtdIdLookupService}
 import play.api.Configuration
@@ -58,7 +59,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
 
         MockedEnrolmentsAuthService
           .authoriseAgent(mtdId)
-          .returns(Future.successful(Right(UserDetails(mtdId, "Agent", Some("arn")))))
+          .returns(Future.successful(Right(UserDetails(mtdId, Agent, Some("arn")))))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
         status(result) shouldBe OK
@@ -71,7 +72,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
 
         MockedEnrolmentsAuthService
           .authoriseAgent(mtdId, supportingAgentAccessAllowed = true)
-          .returns(Future.successful(Right(UserDetails(mtdId, "Agent", Some("arn")))))
+          .returns(Future.successful(Right(UserDetails(mtdId, Agent, Some("arn")))))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
         status(result) shouldBe OK

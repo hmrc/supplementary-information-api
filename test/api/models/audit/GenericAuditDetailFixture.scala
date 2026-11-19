@@ -17,13 +17,14 @@
 package api.models.audit
 
 import api.models.audit.AuditResponseFixture.*
+import api.models.auth.UserType
 import play.api.libs.json.{JsValue, Json}
 
 object GenericAuditDetailFixture {
 
   val nino: String                         = "ZG903729C"
   val calculationId: String                = "calcId"
-  val userType: String                     = "Agent"
+  val userType: UserType                   = UserType.Agent
   val agentReferenceNumber: Option[String] = Some("012345678")
   val pathParams: Map[String, String]      = Map("nino" -> nino, "calculationId" -> calculationId)
   val requestBody: Option[JsValue]         = Some(Json.obj("field1" -> "value1"))
@@ -50,7 +51,7 @@ object GenericAuditDetailFixture {
     s"""
        |{
        |   "versionNumber": "$versionNumber",
-       |   "userType" : "$userType",
+       |   "userType" : "Agent",
        |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
        |   "nino" : "$nino",
        |   "calculationId" : "$calculationId",
@@ -70,7 +71,7 @@ object GenericAuditDetailFixture {
     s"""
        |{
        |   "versionNumber": "$versionNumber",
-       |   "userType" : "$userType",
+       |   "userType" : "Agent",
        |   "agentReferenceNumber" : "${agentReferenceNumber.get}",
        |   "nino": "$nino",
        |   "calculationId" : "$calculationId",
