@@ -18,6 +18,7 @@ package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.ControllerTestRunner
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import api.models.errors.{ErrorWrapper, InternalError, RedirectUrlFormatError}
 import api.models.outcomes.ResponseWrapper
@@ -89,7 +90,7 @@ class InitiateSupplementaryDocumentUploadControllerSpec
         auditType = "InitiateSupplementaryDocumentUpload",
         transactionName = "initiate-supplementary-document-upload",
         detail = GenericAuditDetail(
-          userType = "Individual",
+          userType = UserType.Individual,
           agentReferenceNumber = None,
           versionNumber = apiVersion.name,
           params = Map("nino" -> validNino, "taxYear" -> taxYear),
