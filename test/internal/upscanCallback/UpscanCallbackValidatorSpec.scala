@@ -27,8 +27,10 @@ class UpscanCallbackValidatorSpec extends UnitSpec with JsonErrorValidators {
 
   private implicit val correlationId: String = "someCorrelationId"
 
+  private val validatorFactory = new UpscanCallbackValidatorFactory
+
   private def validate(body: JsValue = successJson) =
-    new UpscanCallbackValidator(body).validateAndWrapResult()
+    validatorFactory.validator(body).validateAndWrapResult()
 
   private def error(mtdError: MtdError) =
     Left(ErrorWrapper(correlationId, mtdError))

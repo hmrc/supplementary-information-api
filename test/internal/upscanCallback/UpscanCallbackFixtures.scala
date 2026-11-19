@@ -16,7 +16,7 @@
 
 package internal.upscanCallback
 
-import internal.upscanCallback.model.{FailureDetails, UploadDetails, UpscanCallbackFailureRequestBody, UpscanCallbackSuccessRequestBody}
+import internal.upscanCallback.model.*
 import play.api.libs.json.{JsValue, Json}
 
 object UpscanCallbackFixtures {
@@ -63,6 +63,19 @@ object UpscanCallbackFixtures {
       size = 1024
     )
   )
+
+  val successRequestData = UpscanCallbackRequestData(body = UpscanCallbackSuccessRequestBody(
+    reference = "11370e18-6e24-453e-b45a-76d3e32ea33d",
+    downloadUrl = "https://bucketName.s3.eu-west-2.amazonaws.com?1235676",
+    fileStatus = "READY",
+    uploadDetails = UploadDetails(
+      fileName = "test.pdf",
+      fileMimeType = "application/pdf",
+      uploadTimestamp = "2026-11-18T00:00:00Z",
+      checksum = "396f101dd52e8b2ace0dcf5ed09b1d1f030e608938510ce46e7a5c7a4e775100",
+      size = 1024
+    )
+  ))
 
   val failureRequestBody = UpscanCallbackFailureRequestBody(
     reference = "11370e18-6e24-453e-b45a-76d3e32ea33d",
