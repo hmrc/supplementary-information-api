@@ -17,6 +17,7 @@
 package api.models.request
 
 import api.models.auth.UserDetails
+import api.models.auth.UserType.Agent
 import api.utils.UnitSpec
 import play.api.test.FakeRequest
 
@@ -26,7 +27,7 @@ class ApiRequestSpec extends UnitSpec {
 
   "UserRequest" should {
     "return user details when userDetailsOpt is called" in {
-      val userDetails = UserDetails(mtdId, "Agent", Some("arn"))
+      val userDetails = UserDetails(mtdId, Agent, Some("arn"))
 
       val request     = FakeRequest()
       val userRequest = UserRequest(userDetails, request)

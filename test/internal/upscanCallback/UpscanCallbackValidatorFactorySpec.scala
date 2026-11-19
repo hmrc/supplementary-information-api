@@ -35,7 +35,7 @@ class UpscanCallbackValidatorFactorySpec extends UnitSpec {
     Left(ErrorWrapper(correlationId, mtdError))
 
   "UpscanCallbackValidatorFactory" should {
-    "validator" when {
+    "use the validator" when {
       "a valid READY callback request is supplied" in {
         validate(successJson) shouldBe Right(
           UpscanCallbackRequestData(successRequestBody)
