@@ -21,6 +21,7 @@ import api.models.domain.{Nino, TaxYear}
 import play.api.libs.json.{JsObject, Json}
 import v1.initiateSupplementaryDocumentUpload.model.*
 import v1.initiateSupplementaryDocumentUpload.model.request.{
+  CreateSkeletalMetadataRecordRequest,
   InitiateSupplementaryDocumentUploadRequestBody,
   InitiateSupplementaryDocumentUploadRequestData,
   UpscanInitiateRequest
@@ -83,6 +84,13 @@ object InitiateSupplementaryDocumentUploadFixtures {
       successRedirect = Some("https://example.com/success"),
       errorRedirect = Some("https://example.com/error"),
       maximumFileSize = 5242880
+    )
+
+  val createSkeletalMetadataRecordRequestModel: CreateSkeletalMetadataRecordRequest =
+    CreateSkeletalMetadataRecordRequest(
+      uploadedBy = "individual",
+      uploadTimestamp = "2026-11-18T08:53:14.597Z",
+      status = "requested"
     )
 
   val responseModel: InitiateSupplementaryDocumentUploadResponse =

@@ -23,6 +23,7 @@ import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.initiateSupplementaryDocumentUpload.model.request.InitiateSupplementaryDocumentUploadRequestData
 
+import java.time.Clock
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockCreateSkeletalMetadataRecordConnector extends TestSuite with MockFactory {
@@ -41,10 +42,11 @@ trait MockCreateSkeletalMetadataRecordConnector extends TestSuite with MockFacto
           .createSkeletalMetadataRecord(_: InitiateSupplementaryDocumentUploadRequestData, _: String)(
             _: HeaderCarrier,
             _: ExecutionContext,
-            _: String
+            _: String,
+            _: Clock
           )
         )
-        .expects(requestData, fileId, *, *, *)
+        .expects(requestData, fileId, *, *, *, *)
 
   }
 

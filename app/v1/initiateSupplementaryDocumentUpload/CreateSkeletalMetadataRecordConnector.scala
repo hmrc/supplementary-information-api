@@ -22,11 +22,13 @@ import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.auth.UserType
 import api.models.auth.UserType.{Agent, Individual, Organisation, SupportingAgent}
-import api.utils.DateUtils.currentTimestamp
+import api.utils.DateUtils.nowAsUtc
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import v1.initiateSupplementaryDocumentUpload.model.request.{CreateSkeletalMetadataRecordRequest, InitiateSupplementaryDocumentUploadRequestData}
 
+import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,15 +41,18 @@ class CreateSkeletalMetadataRecordConnector @Inject() (
   def createSkeletalMetadataRecord(request: InitiateSupplementaryDocumentUploadRequestData, fileId: String)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[Unit]] = {
+      correlationId: String,
+      clock: Clock = Clock.systemUTC()): Future[DownstreamOutcome[Unit]] = {
 
     import request.*
+
+    implicit val successCode: SuccessCode = SuccessCode(Status.CREATED)
 
     val downstreamUri = HipUri[Unit](s"itsd/attachment-metadata/$nino/$fileId?taxYear=${taxYear.asTysDownstream}")
 
     val downstreamRequest = CreateSkeletalMetadataRecordRequest(
       uploadedBy = uploadedBy(userType),
-      uploadTimestamp = currentTimestamp,
+      uploadTimestamp = nowAsUtc,
       status = "requested"
     )
 

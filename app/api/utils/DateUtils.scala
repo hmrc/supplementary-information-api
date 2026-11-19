@@ -17,7 +17,7 @@
 package api.utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{Clock, Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.util.Locale
 
 object DateUtils {
@@ -28,5 +28,10 @@ object DateUtils {
 
   def longDateTimestampGmt(dateTime: LocalDateTime): String = longDateTimeFormatGmt.format(dateTime)
 
-  def currentTimestamp: String = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+  private val timestampFormatter: DateTimeFormatter =
+    DateTimeFormatter
+      .ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'")
+      .withZone(ZoneOffset.UTC)
+
+  def nowAsUtc(implicit clock: Clock): String = timestampFormatter.format(Instant.now(clock))
 }

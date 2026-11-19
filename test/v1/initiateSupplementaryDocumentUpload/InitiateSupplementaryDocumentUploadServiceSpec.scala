@@ -27,29 +27,42 @@ import v1.initiateSupplementaryDocumentUpload.model.response.{InitiateSupplement
 
 import scala.concurrent.Future
 
-class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with MockUpscanInitiateConnector {
+class InitiateSupplementaryDocumentUploadServiceSpec
+    extends ServiceSpec
+    with MockUpscanInitiateConnector
+    with MockCreateSkeletalMetadataRecordConnector {
+
+  private val fileId = "6272100a-5672-402f-9ab3-abfcb6058780"
 
   private val requestData =
     InitiateSupplementaryDocumentUploadRequestData(Nino("AA123456A"), TaxYear.fromMtd("2026-27"), UserType.Individual, None)
 
   private val response = InitiateSupplementaryDocumentUploadResponse(
-    documentId = "document-id",
+    documentId = fileId,
     uploadRequest = UploadRequest("https://example.com", Map("key" -> "value"))
   )
 
-  val service = new InitiateSupplementaryDocumentUploadService(mockUpscanInitiateConnector)
+  private val service = new InitiateSupplementaryDocumentUploadService(mockUpscanInitiateConnector, mockCreateSkeletalMetadataRecordConnector)
+
+  private val upscanOutcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
+    Right(ResponseWrapper("", response))
+
+  private val metadataOutcome: DownstreamOutcome[Unit] = Right(ResponseWrapper(correlationId, ()))
+
+  private val mtdOutcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
+    Right(ResponseWrapper(correlationId, response))
 
   "InitiateSupplementaryDocumentUploadService" when {
     "initiateSupplementaryDocumentUpload is called" should {
       "return a success response with expected body" in {
-        val outcome: DownstreamOutcome[InitiateSupplementaryDocumentUploadResponse] =
-          Right(ResponseWrapper(correlationId, response))
 
         MockedUpscanInitiateConnector
           .upscanInitiate(requestData)
-          .returns(Future.successful(outcome))
+          .returns(Future.successful(upscanOutcome))
 
-        await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe outcome
+        MockedCreateSkeletalMetadataRecordConnector.createSkeletalMetadataRecord(requestData, fileId).returns(Future.successful(metadataOutcome))
+
+        await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe mtdOutcome
       }
 
       "map upscan downstream errors to an internal error" in {
@@ -57,10 +70,37 @@ class InitiateSupplementaryDocumentUploadServiceSpec extends ServiceSpec with Mo
           .upscanInitiate(requestData)
           .returns(
             Future.successful(
-              Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNKNOWN_ERROR"))))
+              Left(ResponseWrapper("", DownstreamErrors.single(DownstreamErrorCode("UNKNOWN_ERROR"))))
             ))
 
-        await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe Left(ErrorWrapper("", InternalError))
+      }
+
+      "map metadata errors according to spec" when {
+        def serviceError(downStreamErrorCode: String, error: MtdError): Unit =
+          s"a $downStreamErrorCode error is returned from the service" in {
+            MockedUpscanInitiateConnector
+              .upscanInitiate(requestData)
+              .returns(Future.successful(upscanOutcome))
+
+            MockedCreateSkeletalMetadataRecordConnector
+              .createSkeletalMetadataRecord(requestData, fileId)
+              .returns(
+                Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downStreamErrorCode)))))
+              )
+
+            await(service.initiateSupplementaryDocumentUpload(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+          }
+
+        val errorMap = List(
+          "1215" -> NinoFormatError,
+          "1117" -> TaxYearFormatError,
+          "1289" -> InternalError,
+          "1216" -> InternalError,
+          "1000" -> InternalError
+        )
+
+        errorMap.foreach(args => serviceError.tupled(args))
       }
     }
   }
