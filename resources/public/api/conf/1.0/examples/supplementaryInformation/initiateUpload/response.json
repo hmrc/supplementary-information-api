@@ -3,8 +3,20 @@
   "uploadRequest": {
     "uploadUrl": "https://xxxx/upscan-upload-proxy/bucketName",
     "fields": {
-      "x-amz-date": "yyyyMMddThhmmssZ",
+      "x-amz-date": "20261120T105159Z",
+      "x-amz-credential": "ASIAxxxxxxxxx/20180202/eu-west-2/s3/aws4_request",
+      "x-amz-meta-upscan-initiate-response": "2026-11-20T10:51:59.440164Z",
+      "x-amz-meta-original-filename": "${filename}",
+      "x-amz-algorithm": "AWS4-HMAC-SHA256",
       "x-amz-signature": "xxxx",
+      "x-amz-meta-session-id": "abb9b975-cc05-45d9-965c-494055375261",
+      "x-amz-meta-callback-url": "https://callback",
+      "x-amz-meta-upscan-initiate-received": "2026-11-20T10:51:59.440164Z",
+      "x-amz-meta-request-id": "8ab47b5f-1363-4098-a489-2f670c9663d7",
+      "key": "11370e18-6e24-453e-b45a-76d3e32ea33d",
+      "acl": "private",
+      "x-amz-meta-consuming-service": "supplementary-information-api",
+      "policy": "eyJjb25kaXRpb25zIjpbWyJjb250ZW50LWxlbmd0aC1yYW5nZSIsMCw1MjQyODgwXV19",
       "success_action_redirect": "https://myservice.com/nextPage",
       "error_action_redirect": "https://myservice.com/errorPage"
     }
