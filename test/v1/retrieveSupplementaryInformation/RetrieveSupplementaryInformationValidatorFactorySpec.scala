@@ -38,42 +38,44 @@ class RetrieveSupplementaryInformationValidatorFactorySpec extends UnitSpec with
   private def validate(nino: String = validNino, taxYear: String) =
     factory.validator(nino, taxYear).validateAndWrapResult()
 
-  "RetrieveSupplementaryInformationValidatorFactory" should {
-    "use the validator" when {
-      "the minimum supported tax year is supplied" in new Test {
-        validate(taxYear = "2026-27") shouldBe
-          Right(RetrieveSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd("2026-27")))
+  "RetrieveSupplementaryInformationValidatorFactory" when {
+    "validator is called" should {
+      "return the parsed domain object" when {
+        "the minimum supported tax year is supplied" in new Test {
+          validate(taxYear = "2026-27") shouldBe
+            Right(RetrieveSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd("2026-27")))
+        }
       }
-    }
-
-    "return NinoFormatError" when {
-      "the nino is invalid" in new Test {
-        validate(nino = "invalid-nino", taxYear = "2026-27") shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))
+      
+      "return NinoFormatError" when {
+        "the nino is invalid" in new Test {
+          validate(nino = "invalid-nino", taxYear = "2026-27") shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))
+        }
       }
-    }
 
-    "return RuleTaxYearNotSupportedError" when {
-      "the tax year is before 2026-27" in new Test {
-        validate(taxYear = "2025-26") shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))
+      "return RuleTaxYearNotSupportedError" when {
+        "the tax year is before 2026-27" in new Test {
+          validate(taxYear = "2025-26") shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearNotSupportedError))
+        }
       }
-    }
 
-    "return TaxYearFormatError" when {
-      "the tax year format is invalid" in new Test {
-        validate(taxYear = "20267") shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
+      "return TaxYearFormatError" when {
+        "the tax year format is invalid" in new Test {
+          validate(taxYear = "20267") shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
+        }
       }
-    }
 
-    "return RuleTaxYearRangeInvalidError" when {
-      "the tax year range is invalid" in new Test {
-        validate(taxYear = "2026-28") shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError))
+      "return RuleTaxYearRangeInvalidError" when {
+        "the tax year range is invalid" in new Test {
+          validate(taxYear = "2026-28") shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError))
+        }
       }
-    }
 
-    "return multiple errors" when {
-      "the nino and the tax year format are both invalid" in new Test {
-        validate(nino = "invalid-nino", taxYear = "invalid-tax-year") shouldBe
-          Left(ErrorWrapper(correlationId, BadRequestError, Some(List(NinoFormatError, TaxYearFormatError))))
+      "return multiple errors" when {
+        "the nino and the tax year format are both invalid" in new Test {
+          validate(nino = "invalid-nino", taxYear = "invalid-tax-year") shouldBe
+            Left(ErrorWrapper(correlationId, BadRequestError, Some(List(NinoFormatError, TaxYearFormatError))))
+        }
       }
     }
   }
