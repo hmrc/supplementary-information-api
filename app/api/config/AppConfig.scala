@@ -42,6 +42,11 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
   // HIP Config
   def hipDownstreamConfig: BasicAuthDownstreamConfig = basicAuthDownstreamConfig("hip")
 
+  // Upscan Config
+  def upscanInitiateBaseUrl: String = config.baseUrl("upscan-initiate")
+  def upscanCallbackUrl: String     = config.getString("upscanCallbackUrl")
+  def upscanMaxFileSize: Int        = config.getInt("upscanMaxFileSize")
+
   // API Config
   def minimumTaxYear: Int = config.getInt("minimumTaxYear")
 

@@ -1,0 +1,66 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package v1.initiateSupplementaryDocumentUpload
+
+import api.controllers.*
+import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import api.utils.IdGenerator
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import api.routing.Version
+import api.config.AppConfig
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
+
+@Singleton
+class InitiateSupplementaryDocumentUploadController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    validatorFactory: InitiateSupplementaryDocumentUploadValidatorFactory,
+    service: InitiateSupplementaryDocumentUploadService,
+    auditService: AuditService,
+    cc: ControllerComponents,
+    idGenerator: IdGenerator
+)(implicit ec: ExecutionContext, appConfig: AppConfig)
+    extends AuthorisedController(cc) {
+
+  val endpointName = "initiate-supplementary-document-upload"
+
+  implicit val endpointLogContext: EndpointLogContext =
+    EndpointLogContext(controllerName = "InitiateSupplementaryDocumentUploadController", endpointName = endpointName)
+
+  def initiate(nino: String, taxYear: String): Action[AnyContent] = authorisedAction(nino).async { implicit request =>
+    implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
+    val validator                    = validatorFactory.validator(nino, taxYear, request.body.asJson)
+
+    val requestHandler = RequestHandler
+      .withValidator(validator)
+      .withService(service.initiateSupplementaryDocumentUpload)
+      .withPlainJsonResult(successStatus = CREATED)
+      .withAuditing(AuditHandler(
+        auditService = auditService,
+        auditType = "InitiateSupplementaryDocumentUpload",
+        transactionName = "initiate-supplementary-document-upload",
+        apiVersion = Version(request),
+        params = Map("nino" -> nino, "taxYear" -> taxYear),
+        requestBody = request.body.asJson
+      ))
+
+    requestHandler.handleRequest()
+  }
+
+}

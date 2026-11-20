@@ -24,6 +24,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class DownstreamStrategySpec extends UnitSpec with ScalaFutures {
 
+  "NoAuthStrategy" must {
+    "use the supplied base URL and send only the correlation ID as a contract header" in {
+      val strategy = DownstreamStrategy.noAuthStrategy("someBaseUrl")
+
+      strategy.baseUrl shouldBe "someBaseUrl"
+      strategy.contractHeaders("someCorrelationId").futureValue shouldBe Nil
+      strategy.environmentHeaders shouldBe empty
+    }
+  }
+
   "BasicAuthStrategy" must {
     "use the supplied BasicAuthDownstreamConfig and ClientAuthConfig" in {
       val downstreamConfig =
