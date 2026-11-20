@@ -19,14 +19,13 @@ package api.controllers
 import api.config.{AppConfig, ConfigFeatureSwitches}
 import api.models.auth.UserDetails
 import api.models.errors.MtdError
+import api.models.request.UserRequest
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
-
-case class UserRequest[A](userDetails: UserDetails, request: Request[A]) extends WrappedRequest[A](request)
 
 abstract class AuthorisedController(
     cc: ControllerComponents

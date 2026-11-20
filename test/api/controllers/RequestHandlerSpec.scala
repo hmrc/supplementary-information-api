@@ -23,6 +23,7 @@ import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDeta
 import api.models.auth.{UserDetails, UserType}
 import api.models.errors.{ErrorWrapper, InternalError, MtdError, NinoFormatError}
 import api.models.outcomes.ResponseWrapper
+import api.models.request.UserRequest
 import api.routing.{Version, Version1}
 import api.services.{MockAuditService, ServiceOutcome}
 import api.utils.DateUtils.longDateTimestampGmt

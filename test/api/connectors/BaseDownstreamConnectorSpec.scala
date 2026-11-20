@@ -156,6 +156,29 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
       behave like sendsRequestWithIntent(Put)
     }
 
+    "patch is called" must {
+      object Patch extends RequestMethodCaller {
+        def makeCall(maybeIntentSpecified: Option[String],
+                     additionalRequiredHeaders: Seq[(String, String)] = Nil,
+                     additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
+          implicit val hc: HeaderCarrier = headerCarrierForInput()
+
+          MockedHttpClient.patch(
+            absoluteUrl,
+            headerCarrierConfig,
+            body,
+            requiredHeaders = standardContractHeadersWith(additionalRequiredHeaders) :+ contentTypeHeader,
+            excludedHeaders = additionalExcludedHeaders
+          ) returns Future.successful(outcome)
+
+          await(connector.patch(body, uri(), maybeIntentSpecified)) shouldBe outcome
+        }
+      }
+
+      behave like sendsRequest(Patch)
+      behave like sendsRequestWithIntent(Patch)
+    }
+
     "get is called" must {
       object Get extends RequestMethodCaller {
         def makeCall(maybeIntentSpecified: Option[String],
