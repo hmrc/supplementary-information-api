@@ -1,0 +1,12 @@
+{
+  "documentId": "11370e18-6e24-453e-b45a-76d3e32ea33d",
+  "uploadRequest": {
+    "uploadUrl": "https://xxxx/upscan-upload-proxy/bucketName",
+    "fields": {
+      "x-amz-date": "yyyyMMddThhmmssZ",
+      "x-amz-signature": "xxxx",
+      "success_action_redirect": "https://myservice.com/nextPage",
+      "error_action_redirect": "https://myservice.com/errorPage"
+    }
+  }
+}
