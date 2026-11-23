@@ -40,7 +40,8 @@ class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String
       ResolveNino(nino),
       resolveTaxYear(taxYear),
       resolveJson(body.filterNot(_ == JsObject.empty))
-    ).mapN((nino, taxYear, body) => InitiateSupplementaryDocumentUploadRequestData(nino, taxYear, userType, body)) andThen
+    ).mapN((validNino, validTaxYear, validBody) =>
+      InitiateSupplementaryDocumentUploadRequestData(validNino, validTaxYear, userType, validBody)) andThen
       validateBusinessRules
 
 }

@@ -51,23 +51,16 @@ class CreateSkeletalMetadataRecordConnectorSpec extends ConnectorSpec {
   }
 
   "CreateSkeletalMetadataRecordConnector" should {
-    "return a valid response" when {
-      "a valid request is made" in new HipTest with Test {
-        willPost(url = downstreamUrl, body = createSkeletalMetadataRecordRequestModel).returns(Future.successful(outcome))
-        await(connector.createSkeletalMetadataRecord(requestData, fileId)) shouldBe outcome
-      }
-    }
-
-    "pass the correct uploadedBy value" should {
+    "map uploadedBy correctly and return a valid response" should {
       val userTypes = Seq(
         (UserType.Individual, "individual"),
         (UserType.Organisation, "individual"),
         (UserType.Agent, "agent"),
-        (UserType.SupportingAgent, "agent")
+        (UserType.`Supporting Agent`, "agent")
       )
 
       userTypes.foreach { (userType, uploadedBy) =>
-        s"user type $userType is mapped to '$uploadedBy'" in new HipTest with Test {
+        s"a valid request is made for user type $userType" in new HipTest with Test {
           private val requestDataWithUserType = requestData.copy(userType = userType)
           private val bodyWithUploadedBy      = createSkeletalMetadataRecordRequestModel.copy(uploadedBy = uploadedBy)
 

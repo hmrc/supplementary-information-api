@@ -197,7 +197,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         mockConfidenceLevelCheckConfig(authValidationEnabled = authValidationEnabled)
 
         val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId, endpointAllowsSupportingAgents = true))
-        result shouldBe Right(UserDetails(mtdId, UserType.SupportingAgent, Some(arn)))
+        result shouldBe Right(UserDetails(mtdId, UserType.`Supporting Agent`, Some(arn)))
       }
 
     def disallowSupportingAgentForPrimaryOnlyEndpoint(

@@ -70,7 +70,7 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
               case _: AuthorisationException if endpointAllowsSupportingAgents =>
                 authFunction
                   .authorised(EnrolmentsAuthService.supportingAgentAuthPredicate(mtdId)) {
-                    Future.successful(agentDetails(mtdId, UserType.SupportingAgent, authorisedEnrolments))
+                    Future.successful(agentDetails(mtdId, UserType.`Supporting Agent`, authorisedEnrolments))
                   }
             }
 

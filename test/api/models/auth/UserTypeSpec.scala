@@ -16,35 +16,17 @@
 
 package api.models.auth
 
+import api.models.auth.UserType.*
 import api.utils.UnitSpec
-import play.api.libs.json.{JsString, Json}
+import api.utils.enums.EnumJsonSpecSupport
 
-class UserTypeSpec extends UnitSpec {
+class UserTypeSpec extends UnitSpec with EnumJsonSpecSupport {
 
-  "UserType" when {
-    "Individual written to JSON" should {
-      "produce the expected JsString(\"Individual\")" in {
-        Json.toJson(UserType.Individual) shouldBe JsString("Individual")
-      }
-    }
-
-    "Organisation written to JSON" should {
-      "produce the expected JsString(\"Organisation\")" in {
-        Json.toJson(UserType.Organisation) shouldBe JsString("Organisation")
-      }
-    }
-
-    "Agent written to JSON" should {
-      "produce the expected JsString(\"Agent\")" in {
-        Json.toJson(UserType.Agent) shouldBe JsString("Agent")
-      }
-    }
-
-    "SupportingAgent written to JSON" should {
-      "produce the expected JsString(\"Supporting Agent\")" in {
-        Json.toJson(UserType.SupportingAgent) shouldBe JsString("Supporting Agent")
-      }
-    }
-  }
+  testSerialization[UserType](
+    Individual         -> "Individual",
+    Organisation       -> "Organisation",
+    Agent              -> "Agent",
+    `Supporting Agent` -> "Supporting Agent"
+  )
 
 }

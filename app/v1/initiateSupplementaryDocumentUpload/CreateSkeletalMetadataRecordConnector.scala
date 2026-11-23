@@ -21,7 +21,7 @@ import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.auth.UserType
-import api.models.auth.UserType.{Agent, Individual, Organisation, SupportingAgent}
+import api.models.auth.UserType.{Agent, Individual, Organisation, `Supporting Agent`}
 import api.utils.DateUtils.nowAsUtc
 import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
@@ -60,10 +60,8 @@ class CreateSkeletalMetadataRecordConnector @Inject() (
   }
 
   private def uploadedBy(userType: UserType): String = userType match {
-    case Individual      => "individual"
-    case Organisation    => "individual"
-    case Agent           => "agent"
-    case SupportingAgent => "agent"
+    case Individual | Organisation  => "individual"
+    case Agent | `Supporting Agent` => "agent"
   }
 
 }

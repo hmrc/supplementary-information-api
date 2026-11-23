@@ -37,13 +37,15 @@ class InitiateSupplementaryDocumentUploadService @Inject() (upscanConnector: Ups
       ec: ExecutionContext): Future[ServiceOutcome[InitiateSupplementaryDocumentUploadResponse]] = {
 
     val response = for {
-      upscanResponse <- EitherT(upscanConnector.upscanInitiate(request))
+      upscanResponse <- EitherT(upscanConnector.upscanInitiate(request)).leftMap(mapDownstreamErrors(upscanErrorMap))
       fileId = upscanResponse.responseData.documentId
-      metadataResponse <- EitherT(metadataConnector.createSkeletalMetadataRecord(request, fileId))
+      metadataResponse <- EitherT(metadataConnector.createSkeletalMetadataRecord(request, fileId)).leftMap(mapDownstreamErrors(metadataErrorMap))
     } yield upscanResponse.copy(correlationId = metadataResponse.correlationId)
 
-    response.value.map(_.leftMap(mapDownstreamErrors(metadataErrorMap)))
+    response.value
   }
+
+  private val upscanErrorMap: Map[String, MtdError] = Map.empty
 
   private val metadataErrorMap: Map[String, MtdError] = Map(
     "1215" -> NinoFormatError,

@@ -116,7 +116,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
 
       "a downstream upscan error" which {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"returns $INTERNAL_SERVER_ERROR when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
+          s"returns $expectedStatus when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
             override def setupStubs(): StubMapping = {
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
@@ -145,7 +145,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
 
       "a downstream create metadata record error" which {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"returns $INTERNAL_SERVER_ERROR when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
+          s"returns $expectedStatus when create metadata record call returns code $downstreamCode and status $downstreamStatus" in new Test {
             override def setupStubs(): StubMapping = {
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
