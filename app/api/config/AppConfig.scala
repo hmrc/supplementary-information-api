@@ -21,6 +21,7 @@ import api.routing.Version
 import cats.data.Validated
 import cats.implicits.*
 import com.typesafe.config.Config
+import internal.upscanCallback.routes.UpscanCallbackController
 import play.api.{ConfigLoader, Configuration}
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -36,6 +37,9 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
   // API name
   def appName: String = config.getString("appName")
 
+  // App URL
+  def appUrl: String = config.getString("appUrl")
+
   // MTD ID Lookup Config
   def mtdIdBaseUrl: String = config.baseUrl("mtd-id-lookup")
 
@@ -44,7 +48,7 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
 
   // Upscan Config
   def upscanInitiateBaseUrl: String = config.baseUrl("upscan-initiate")
-  def upscanCallbackUrl: String     = config.getString("upscanCallbackUrl")
+  def upscanCallbackUrl: String     = appUrl + UpscanCallbackController.handleCallback().url
   def upscanMaxFileSize: Int        = config.getInt("upscanMaxFileSize")
 
   // API Config
