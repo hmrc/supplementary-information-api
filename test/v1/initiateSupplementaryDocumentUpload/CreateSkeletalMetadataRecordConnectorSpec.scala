@@ -51,7 +51,7 @@ class CreateSkeletalMetadataRecordConnectorSpec extends ConnectorSpec {
   }
 
   "CreateSkeletalMetadataRecordConnector" should {
-    "map uploadedBy correctly and return a valid response" should {
+    "map uploadedBy correctly and return a valid response" when {
       val userTypes = Seq(
         (UserType.Individual, "individual"),
         (UserType.Organisation, "individual"),
