@@ -28,7 +28,8 @@ import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploa
 import v1.initiateSupplementaryDocumentUpload.model.request.*
 
 class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String, userType: UserType, body: Option[JsValue])
-    extends Validator[InitiateSupplementaryDocumentUploadRequestData] {
+    extends Validator[InitiateSupplementaryDocumentUploadRequestData]
+    with ResolverSupport {
 
   private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
 

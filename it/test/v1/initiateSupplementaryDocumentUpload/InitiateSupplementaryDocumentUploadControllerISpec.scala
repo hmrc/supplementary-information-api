@@ -16,21 +16,10 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
-import play.api.libs.json.JsObject
 import api.models.errors.*
 import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.support.IntegrationBaseSpec
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, matching, postRequestedFor, urlEqualTo}
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.Json
-import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers.*
-import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-import InitiateSupplementaryDocumentUploadFixtures.*
-import api.models.errors.*
-import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
-import api.support.IntegrationBaseSpec
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
