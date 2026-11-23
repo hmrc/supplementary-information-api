@@ -26,15 +26,15 @@ class InitiateSupplementaryDocumentUploadRequestBodySpec extends UnitSpec {
     "read from valid JSON" should {
       "produce the expected object" when {
         "all fields present" in {
-          mtdRequestBodyJson.as[InitiateSupplementaryDocumentUploadRequestBody] shouldBe requestBodyModel
+          mtdRequestBodyJson.as[InitiateSupplementaryDocumentUploadRequestBody] shouldBe mtdRequestBodyModel
         }
         "only successRedirect present" in {
           (mtdRequestBodyJson - "errorRedirect").as[InitiateSupplementaryDocumentUploadRequestBody] shouldBe
-            requestBodyModel.copy(errorRedirect = None)
+            mtdRequestBodyModel.copy(errorRedirect = None)
         }
         "only errorRedirect present" in {
           (mtdRequestBodyJson - "successRedirect").as[InitiateSupplementaryDocumentUploadRequestBody] shouldBe
-            requestBodyModel.copy(successRedirect = None)
+            mtdRequestBodyModel.copy(successRedirect = None)
 
         }
         "both fields not present" in {

@@ -45,14 +45,14 @@ class CreateSkeletalMetadataRecordConnectorSpec extends ConnectorSpec {
     )
 
     val requestData: InitiateSupplementaryDocumentUploadRequestData =
-      InitiateSupplementaryDocumentUploadRequestData(Nino(nino), taxYear, UserType.Individual, Some(requestBodyModel))
+      InitiateSupplementaryDocumentUploadRequestData(Nino(nino), taxYear, UserType.Individual, Some(mtdRequestBodyModel))
 
+    val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
   }
 
   "CreateSkeletalMetadataRecordConnector" should {
     "return a valid response" when {
       "a valid request is made" in new HipTest with Test {
-        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
         willPost(url = downstreamUrl, body = createSkeletalMetadataRecordRequestModel).returns(Future.successful(outcome))
         await(connector.createSkeletalMetadataRecord(requestData, fileId)) shouldBe outcome
       }
@@ -71,7 +71,6 @@ class CreateSkeletalMetadataRecordConnectorSpec extends ConnectorSpec {
           private val requestDataWithUserType = requestData.copy(userType = userType)
           private val bodyWithUploadedBy      = createSkeletalMetadataRecordRequestModel.copy(uploadedBy = uploadedBy)
 
-          val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
           willPost(url = downstreamUrl, body = bodyWithUploadedBy).returns(Future.successful(outcome))
           await(connector.createSkeletalMetadataRecord(requestDataWithUserType, fileId)) shouldBe outcome
         }

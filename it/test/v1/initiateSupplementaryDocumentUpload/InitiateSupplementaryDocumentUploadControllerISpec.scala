@@ -41,7 +41,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
             method = DownstreamStub.POST,
             uri = upscanUri,
             status = OK,
-            body = downstreamResponseJson
+            body = upscanResponseJson
           )
 
           DownstreamStub.onSuccess(
@@ -61,7 +61,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
           postRequestedFor(urlEqualTo(upscanUri))
             .withHeader("User-Agent", equalTo("supplementary-information-api"))
             .withHeader("Content-Type", equalTo("application/json"))
-            .withRequestBody(equalToJson(downstreamRequestBodyJson.toString))
+            .withRequestBody(equalToJson(upscanRequestBodyJson.toString))
         )
       }
     }
@@ -138,6 +138,46 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
           (BAD_REQUEST, "Invalid request body", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "Upscan is unavailable", INTERNAL_SERVER_ERROR, InternalError),
           (OK, "{}", INTERNAL_SERVER_ERROR, InternalError)
+        )
+
+        input.foreach(args => serviceErrorTest.tupled(args))
+      }
+
+      "a downstream create metadata record error" which {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"returns $INTERNAL_SERVER_ERROR when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
+            override def setupStubs(): StubMapping = {
+              MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
+
+              DownstreamStub.onSuccess(
+                method = DownstreamStub.POST,
+                uri = upscanUri,
+                status = OK,
+                body = upscanResponseJson
+              )
+
+              DownstreamStub.onError(
+                method = DownstreamStub.POST,
+                uri = metadataUri,
+                queryParams = queryParams,
+                errorStatus = downstreamStatus,
+                errorBody = errorBody(downstreamCode)
+              )
+            }
+
+            val response: WSResponse = await(request().post(mtdRequestBodyJson))
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+
+        val input = List(
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "1289", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1000", INTERNAL_SERVER_ERROR, InternalError)
         )
 
         input.foreach(args => serviceErrorTest.tupled(args))

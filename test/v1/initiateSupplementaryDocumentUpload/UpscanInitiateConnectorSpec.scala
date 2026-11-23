@@ -48,21 +48,21 @@ class UpscanInitiateConnectorSpec extends ConnectorSpec {
     "post the upload request and return the response" when {
       "redirect urls are supplied" in new Test {
         val outcome: Right[Nothing, ResponseWrapper[InitiateSupplementaryDocumentUploadResponse]] =
-          Right(ResponseWrapper(correlationId, responseModel))
+          Right(ResponseWrapper(correlationId, mtdResponseModel))
 
         willPost(downstreamUrl, upscanRequestModel).returns(Future.successful(outcome))
 
-        await(connector.upscanInitiate(requestDataModel)) shouldBe outcome
+        await(connector.upscanInitiate(mtdRequestDataModel)) shouldBe outcome
       }
 
       "no redirect urls are supplied" in new Test {
         val outcome: Right[Nothing, ResponseWrapper[InitiateSupplementaryDocumentUploadResponse]] =
-          Right(ResponseWrapper(correlationId, responseModel))
+          Right(ResponseWrapper(correlationId, mtdResponseModel))
         val body: UpscanInitiateRequest = upscanRequestModel.copy(successRedirect = None, errorRedirect = None)
 
         willPost(downstreamUrl, body).returns(Future.successful(outcome))
 
-        await(connector.upscanInitiate(requestDataModel.copy(body = None))) shouldBe outcome
+        await(connector.upscanInitiate(mtdRequestDataModel.copy(body = None))) shouldBe outcome
       }
     }
   }

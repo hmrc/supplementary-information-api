@@ -22,12 +22,12 @@ import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploa
 
 class UploadRequestSpec extends UnitSpec {
 
-  private val downstreamJson = (downstreamResponseJson \ "uploadRequest").as[JsObject]
+  private val downstreamJson = (upscanResponseJson \ "uploadRequest").as[JsObject]
 
   "UploadRequest" when {
     "read from downstream JSON" should {
       "rename the upload URL while preserving all fields" in {
-        downstreamJson.validate[UploadRequest] shouldBe JsSuccess(responseModel.uploadRequest)
+        downstreamJson.validate[UploadRequest] shouldBe JsSuccess(mtdResponseModel.uploadRequest)
       }
 
       "return a JsError" when {
@@ -56,7 +56,7 @@ class UploadRequestSpec extends UnitSpec {
 
     "written to JSON" should {
       "produce the expected JsObject" in {
-        Json.toJson(responseModel.uploadRequest) shouldBe (mtdResponseJson \ "uploadRequest").as[JsObject]
+        Json.toJson(mtdResponseModel.uploadRequest) shouldBe (mtdResponseJson \ "uploadRequest").as[JsObject]
       }
     }
   }

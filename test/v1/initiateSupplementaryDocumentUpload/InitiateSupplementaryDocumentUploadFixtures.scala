@@ -35,14 +35,14 @@ object InitiateSupplementaryDocumentUploadFixtures {
     "errorRedirect"   -> "https://example.com/error"
   )
 
-  val downstreamRequestBodyJson: JsObject = Json.obj(
+  val upscanRequestBodyJson: JsObject = Json.obj(
     "callbackUrl"     -> "https://callback",
     "successRedirect" -> "https://example.com/success",
     "errorRedirect"   -> "https://example.com/error",
     "maximumFileSize" -> 5242880L
   )
 
-  val downstreamResponseJson: JsObject = Json.obj(
+  val upscanResponseJson: JsObject = Json.obj(
     "reference" -> "document-reference",
     "uploadRequest" -> Json.obj(
       "href" -> "https://example.com/upload",
@@ -64,18 +64,18 @@ object InitiateSupplementaryDocumentUploadFixtures {
     )
   )
 
-  val requestBodyModel: InitiateSupplementaryDocumentUploadRequestBody =
+  val mtdRequestBodyModel: InitiateSupplementaryDocumentUploadRequestBody =
     InitiateSupplementaryDocumentUploadRequestBody(
       successRedirect = Some("https://example.com/success"),
       errorRedirect = Some("https://example.com/error")
     )
 
-  val requestDataModel: InitiateSupplementaryDocumentUploadRequestData =
+  val mtdRequestDataModel: InitiateSupplementaryDocumentUploadRequestData =
     InitiateSupplementaryDocumentUploadRequestData(
       nino = Nino("AA123456A"),
       taxYear = TaxYear.fromMtd("2026-27"),
       userType = UserType.Individual,
-      body = Some(requestBodyModel)
+      body = Some(mtdRequestBodyModel)
     )
 
   val upscanRequestModel: UpscanInitiateRequest =
@@ -93,7 +93,7 @@ object InitiateSupplementaryDocumentUploadFixtures {
       status = "requested"
     )
 
-  val responseModel: InitiateSupplementaryDocumentUploadResponse =
+  val mtdResponseModel: InitiateSupplementaryDocumentUploadResponse =
     InitiateSupplementaryDocumentUploadResponse(
       documentId = "document-reference",
       uploadRequest = UploadRequest(

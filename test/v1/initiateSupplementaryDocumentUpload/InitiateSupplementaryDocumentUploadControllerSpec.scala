@@ -38,7 +38,7 @@ class InitiateSupplementaryDocumentUploadControllerSpec
   private val taxYear = "2026-27"
 
   private val requestData =
-    InitiateSupplementaryDocumentUploadRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), UserType.Individual, Some(requestBodyModel))
+    InitiateSupplementaryDocumentUploadRequestData(Nino(validNino), TaxYear.fromMtd(taxYear), UserType.Individual, Some(mtdRequestBodyModel))
 
   "InitiateSupplementaryDocumentUploadController" should {
     "return 201 (CREATED) with the response body" when {
@@ -47,7 +47,7 @@ class InitiateSupplementaryDocumentUploadControllerSpec
 
         MockedInitiateSupplementaryDocumentUploadService
           .initiateSupplementaryDocumentUpload(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, mtdResponseModel))))
 
         runOkTestWithAudit(
           expectedStatus = CREATED,
