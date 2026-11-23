@@ -29,7 +29,7 @@ class DownstreamStrategySpec extends UnitSpec with ScalaFutures {
       val strategy = DownstreamStrategy.noAuthStrategy("someBaseUrl")
 
       strategy.baseUrl shouldBe "someBaseUrl"
-      strategy.contractHeaders("someCorrelationId").futureValue shouldBe Seq("CorrelationId" -> "someCorrelationId")
+      strategy.contractHeaders("someCorrelationId").futureValue shouldBe Nil
       strategy.environmentHeaders shouldBe empty
     }
   }

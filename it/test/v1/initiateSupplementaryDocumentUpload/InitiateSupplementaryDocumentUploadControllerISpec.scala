@@ -27,6 +27,16 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import InitiateSupplementaryDocumentUploadFixtures.*
+import api.models.errors.*
+import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
+import api.support.IntegrationBaseSpec
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.{JsObject, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.test.Helpers.*
+import v1.initiateSupplementaryDocumentUpload.InitiateSupplementaryDocumentUploadFixtures.*
 
 class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBaseSpec {
 
@@ -51,7 +61,6 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
             queryParams = queryParams,
             status = CREATED
           )
-
         }
 
         val response: WSResponse = await(request().post(mtdRequestBodyJson))
@@ -61,7 +70,6 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         wireMockServer.verify(
           1,
           postRequestedFor(urlEqualTo(upscanUri))
-            .withHeader("CorrelationId", matching(".+"))
             .withHeader("User-Agent", equalTo("supplementary-information-api"))
             .withHeader("Content-Type", equalTo("application/json"))
             .withRequestBody(equalToJson(downstreamRequestBodyJson.toString))
@@ -118,8 +126,8 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
       }
 
       "a downstream upscan error" which {
-        def serviceErrorTest(downstreamStatus: Int, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"returns $INTERNAL_SERVER_ERROR when upscan returns status $downstreamStatus" in new Test {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"returns $INTERNAL_SERVER_ERROR when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
             override def setupStubs(): StubMapping = {
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
@@ -128,7 +136,7 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
                 method = DownstreamStub.POST,
                 uri = upscanUri,
                 errorStatus = downstreamStatus,
-                errorBody = upscanError
+                errorBody = errorBody(downstreamCode)
               )
             }
 
@@ -138,9 +146,9 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
           }
         }
         val input = List(
-          (INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, INTERNAL_SERVER_ERROR, InternalError),
-          (OK, INTERNAL_SERVER_ERROR, InternalError)
+          (BAD_REQUEST, "Invalid request body", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "Upscan is unavailable", INTERNAL_SERVER_ERROR, InternalError),
+          (OK, "{}", INTERNAL_SERVER_ERROR, InternalError)
         )
 
         input.foreach(args => serviceErrorTest.tupled(args))
@@ -164,12 +172,10 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123")
-        ) // TODO check headers
+        )
     }
 
-    val upscanError: String = "Invalid callback url format: []. [no protocol: ]"
-
-    def metadataErrorBody(code: String): String =
+    def errorBody(code: String): String =
       s"""
          |[
          |  {

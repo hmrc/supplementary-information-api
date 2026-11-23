@@ -21,7 +21,8 @@ import api.config.Deprecation.HasDeprecationDates
 import api.controllers.validators.Validator
 import api.models.errors.{ErrorWrapper, InternalError}
 import api.models.outcomes.ResponseWrapper
-import api.routing.Version
+import api.models.request.ApiRequest
+import api.routing.{Version, Versions}
 import api.services.ServiceOutcome
 import api.utils.DateUtils.longDateTimestampGmt
 import api.utils.Logging
@@ -36,7 +37,7 @@ import play.api.mvc.Results.InternalServerError
 import scala.concurrent.{ExecutionContext, Future}
 
 trait RequestHandler {
-  def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
+  def handleRequest()(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
 }
 
 object RequestHandler {
@@ -60,7 +61,7 @@ object RequestHandler {
       responseModifier: Option[Output => Output] = None
   ) extends RequestHandler {
 
-    def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
+    def handleRequest()(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
       Delegate.handleRequest()
 
     def withErrorHandling(errorHandling: ErrorHandling): RequestHandlerBuilder[Input, Output] =
@@ -91,17 +92,17 @@ object RequestHandler {
     // Scoped as a private delegate so as to keep the logic completely separate from the configuration
     private object Delegate extends RequestHandler with Logging with RequestContextImplicits {
 
-      implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Version) {
+      implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Option[Version]) {
 
-        private def withDeprecationHeaders: List[(String, String)] = appConfig.deprecationFor(apiVersion) match {
-          case Valid(deprecation: HasDeprecationDates) =>
+        private def withDeprecationHeaders: List[(String, String)] = apiVersion
+          .map(appConfig.deprecationFor)
+          .collect { case Valid(deprecation: HasDeprecationDates) =>
             List(
               "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
               "Link"        -> appConfig.apiDocumentationUrl
             ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
-
-          case _ => Nil
-        }
+          }
+          .getOrElse(Nil)
 
         def withApiHeaders(correlationId: String, responseHeaders: (String, String)*): Result = {
 
@@ -120,7 +121,7 @@ object RequestHandler {
 
       def handleRequest()(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext,
           appConfig: AppConfig
       ): Future[Result] = {
@@ -152,11 +153,11 @@ object RequestHandler {
 
       private def handleSuccess(parsedRequest: Input, serviceResponse: ResponseWrapper[Output])(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext,
           appConfig: AppConfig): Result = {
 
-        implicit val apiVersion: Version = Version(request)
+        implicit val apiVersion: Option[Version] = Versions.getFromRequest(request).toOption
 
         logger.info(
           s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] - " +
@@ -171,9 +172,9 @@ object RequestHandler {
       }
 
       private def handleFailure(
-          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
+          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: ApiRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
 
-        implicit val apiVersion: Version = Version(request)
+        implicit val apiVersion: Option[Version] = Versions.getFromRequest(request).toOption
         logger.warn(
           s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: ${ctx.correlationId}")
@@ -193,10 +194,12 @@ object RequestHandler {
 
       private def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
           ctx: RequestContext,
-          request: UserRequest[?],
+          request: ApiRequest[?],
           ec: ExecutionContext): Unit =
-        auditHandler.foreach { creator =>
-          creator.performAudit(request.userDetails, httpStatus, response)
+        request.userDetailsOpt.foreach { userDetails =>
+          auditHandler.foreach { creator =>
+            creator.performAudit(userDetails, httpStatus, response)
+          }
         }
 
     }

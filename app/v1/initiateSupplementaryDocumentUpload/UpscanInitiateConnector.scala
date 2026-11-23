@@ -18,7 +18,7 @@ package v1.initiateSupplementaryDocumentUpload
 
 import api.config.AppConfig
 import api.connectors.DownstreamUri.UpscanUri
-import api.connectors.httpparsers.StandardDownstreamHttpParser.*
+import api.connectors.httpparsers.UpscanHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2

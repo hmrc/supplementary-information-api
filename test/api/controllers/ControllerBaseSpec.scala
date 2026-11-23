@@ -31,6 +31,7 @@ import play.api.mvc.*
 import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{FakeRequest, ResultExtractors}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.Future
 
@@ -128,6 +129,42 @@ trait ControllerTestRunner
           )
 
       realAppConfig.endpointAllowsSupportingAgents(controller.endpointName) shouldBe endpointSupportingAgentsAllowed
+    }
+
+  }
+
+  trait BackendControllerTest {
+
+    protected val hc: HeaderCarrier = HeaderCarrier()
+
+    protected val controller: BackendController
+
+    protected def callController(): Future[Result]
+
+    MockedIdGenerator.generateCorrelationId.returns(correlationId)
+
+    protected def runOkTest(
+        expectedStatus: Int,
+        maybeExpectedResponseBody: Option[JsValue] = None
+    ): Unit = {
+      val result: Future[Result] = callController()
+
+      status(result) shouldBe expectedStatus
+      header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+      maybeExpectedResponseBody match {
+        case Some(jsBody) => contentAsJson(result) shouldBe jsBody
+        case None         => contentType(result) shouldBe empty
+      }
+    }
+
+    protected def runErrorTest(expectedError: MtdError): Unit = {
+      val result: Future[Result] = callController()
+
+      status(result) shouldBe expectedError.httpStatus
+      header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+      contentAsJson(result) shouldBe Json.toJson(expectedError)
     }
 
   }

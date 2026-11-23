@@ -45,7 +45,7 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
   // Upscan Config
   def upscanInitiateBaseUrl: String = config.baseUrl("upscan-initiate")
   def upscanCallbackUrl: String     = config.getString("upscanCallbackUrl")
-  def upscanMaxFileSize: Long       = config.getInt("upscanMaxFileSize").toLong
+  def upscanMaxFileSize: Int        = config.getInt("upscanMaxFileSize")
 
   // API Config
   def minimumTaxYear: Int = config.getInt("minimumTaxYear")

@@ -55,7 +55,6 @@ class InitiateSupplementaryDocumentUploadServiceSpec
   "InitiateSupplementaryDocumentUploadService" when {
     "initiateSupplementaryDocumentUpload is called" should {
       "return a success response with expected body" in {
-
         MockedUpscanInitiateConnector
           .upscanInitiate(requestData)
           .returns(Future.successful(upscanOutcome))

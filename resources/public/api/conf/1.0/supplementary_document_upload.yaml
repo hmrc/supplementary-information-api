@@ -1,0 +1,5 @@
+post:
+  $ref: "./initiate_supplementary_document_upload.yaml"
+  security:
+    - User-Restricted:
+        - write:self-assessment

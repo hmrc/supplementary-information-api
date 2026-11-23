@@ -19,14 +19,13 @@ package api.controllers
 import api.config.{AppConfig, ConfigFeatureSwitches}
 import api.models.auth.UserDetails
 import api.models.errors.MtdError
+import api.models.request.UserRequest
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
-
-case class UserRequest[A](userDetails: UserDetails, request: Request[A]) extends WrappedRequest[A](request)
 
 abstract class AuthorisedController(
     cc: ControllerComponents
@@ -67,7 +66,18 @@ abstract class AuthorisedController(
 
     override def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
 
-      implicit val headerCarrier: HeaderCarrier = hc(request)
+      // Temporary workaround: prevent incorrect Content-Type values from being propagated downstream for requests
+      // without a body until auth-client is updated to override them with application/json via setHeader.
+      val initialHc: HeaderCarrier = hc(request)
+
+      implicit val headerCarrier: HeaderCarrier =
+        if (request.hasBody) {
+          initialHc
+        } else {
+          initialHc.copy(
+            otherHeaders = initialHc.otherHeaders.filterNot(_._1.equalsIgnoreCase("Content-Type"))
+          )
+        }
 
       lookupService.lookup(nino).flatMap[Result] {
         case Right(mtdId) =>

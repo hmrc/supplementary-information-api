@@ -31,16 +31,3 @@ object InitiateSupplementaryDocumentUploadResponse {
   given writes: OWrites[InitiateSupplementaryDocumentUploadResponse] = Json.writes[InitiateSupplementaryDocumentUploadResponse]
 
 }
-
-case class UploadRequest(uploadUrl: String, fields: Map[String, String])
-
-object UploadRequest {
-
-  given reads: Reads[UploadRequest] = (
-    (__ \ "href").read[String] and
-      (__ \ "fields").read[Map[String, String]].filter(JsonValidationError("error.expected.nonEmpty"))(_.nonEmpty)
-  )(UploadRequest.apply)
-
-  given writes: OWrites[UploadRequest] = Json.writes[UploadRequest]
-
-}

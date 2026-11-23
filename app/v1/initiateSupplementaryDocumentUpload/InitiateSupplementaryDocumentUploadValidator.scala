@@ -17,7 +17,7 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveJsonObject, ResolveNino}
+import api.controllers.validators.resolvers.{ResolveDetailedTaxYear, ResolveJsonObject, ResolveNino, ResolverSupport}
 import api.models.auth.UserType
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
@@ -32,19 +32,13 @@ class InitiateSupplementaryDocumentUploadValidator(nino: String, taxYear: String
 
   private lazy val resolveTaxYear = ResolveDetailedTaxYear(minimumTaxYear = TaxYear.fromMtd("2026-27"))
 
-  private lazy val resolveJsonObject = new ResolveJsonObject[InitiateSupplementaryDocumentUploadRequestBody]()
-
-  private def resolveJson(data: JsValue): Validated[Seq[MtdError], Option[InitiateSupplementaryDocumentUploadRequestBody]] =
-    data match {
-      case obj: JsObject if obj.fields.isEmpty => Validated.Valid(None)
-      case _                                   => resolveJsonObject(data).map(Some(_))
-    }
+  private lazy val resolveJson = ResolveJsonObject.resolver[InitiateSupplementaryDocumentUploadRequestBody].resolveOptionally
 
   def validate: Validated[Seq[MtdError], InitiateSupplementaryDocumentUploadRequestData] =
     (
       ResolveNino(nino),
       resolveTaxYear(taxYear),
-      body.map(resolveJson).getOrElse(Validated.Valid(None))
+      resolveJson(body.filterNot(_ == JsObject.empty))
     ).mapN((nino, taxYear, body) => InitiateSupplementaryDocumentUploadRequestData(nino, taxYear, userType, body)) andThen
       validateBusinessRules
 
