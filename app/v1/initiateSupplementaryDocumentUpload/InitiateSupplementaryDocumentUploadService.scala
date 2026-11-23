@@ -17,8 +17,9 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.RequestContext
-import api.services.{BaseService, ServiceOutcome}
 import api.models.errors.{MtdError, *}
+import api.services.{BaseService, ServiceOutcome}
+import cats.data.EitherT
 import cats.implicits.*
 import v1.initiateSupplementaryDocumentUpload.model.request.InitiateSupplementaryDocumentUploadRequestData
 import v1.initiateSupplementaryDocumentUpload.model.response.InitiateSupplementaryDocumentUploadResponse
@@ -27,13 +28,31 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class InitiateSupplementaryDocumentUploadService @Inject() (connector: UpscanInitiateConnector) extends BaseService {
+class InitiateSupplementaryDocumentUploadService @Inject() (upscanConnector: UpscanInitiateConnector,
+                                                            metadataConnector: CreateSkeletalMetadataRecordConnector)
+    extends BaseService {
 
   def initiateSupplementaryDocumentUpload(request: InitiateSupplementaryDocumentUploadRequestData)(implicit
       ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[InitiateSupplementaryDocumentUploadResponse]] =
-    connector
-      .upscanInitiate(request)
-      .map(_.leftMap(mapDownstreamErrors(Map.empty)))
+      ec: ExecutionContext): Future[ServiceOutcome[InitiateSupplementaryDocumentUploadResponse]] = {
+
+    val response = for {
+      upscanResponse <- EitherT(upscanConnector.upscanInitiate(request)).leftMap(mapDownstreamErrors(upscanErrorMap))
+      fileId = upscanResponse.responseData.documentId
+      metadataResponse <- EitherT(metadataConnector.createSkeletalMetadataRecord(request, fileId)).leftMap(mapDownstreamErrors(metadataErrorMap))
+    } yield upscanResponse.copy(correlationId = metadataResponse.correlationId)
+
+    response.value
+  }
+
+  private val upscanErrorMap: Map[String, MtdError] = Map.empty
+
+  private val metadataErrorMap: Map[String, MtdError] = Map(
+    "1215" -> NinoFormatError,
+    "1117" -> TaxYearFormatError,
+    "1289" -> InternalError,
+    "1216" -> InternalError,
+    "1000" -> InternalError
+  )
 
 }

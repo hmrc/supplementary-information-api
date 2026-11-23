@@ -46,7 +46,7 @@ class RetrieveSupplementaryInformationValidatorFactorySpec extends UnitSpec with
             Right(RetrieveSupplementaryInformationRequestData(Nino(validNino), TaxYear.fromMtd("2026-27")))
         }
       }
-      
+
       "return NinoFormatError" when {
         "the nino is invalid" in new Test {
           validate(nino = "invalid-nino", taxYear = "2026-27") shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))

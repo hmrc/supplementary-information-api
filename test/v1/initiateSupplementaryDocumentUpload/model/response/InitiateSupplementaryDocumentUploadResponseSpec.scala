@@ -25,13 +25,13 @@ class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
   "InitiateSupplementaryDocumentUploadResponse" when {
     "read from downstream JSON" should {
       "rename the reference and read the upload request" in {
-        downstreamResponseJson.validate[InitiateSupplementaryDocumentUploadResponse] shouldBe JsSuccess(responseModel)
+        upscanResponseJson.validate[InitiateSupplementaryDocumentUploadResponse] shouldBe JsSuccess(mtdResponseModel)
       }
 
       "return a JsError for missing required fields" in {
         val invalidResponses = Seq(
-          downstreamResponseJson - "reference",
-          downstreamResponseJson - "uploadRequest"
+          upscanResponseJson - "reference",
+          upscanResponseJson - "uploadRequest"
         )
 
         invalidResponses.foreach { json =>
@@ -42,7 +42,7 @@ class InitiateSupplementaryDocumentUploadResponseSpec extends UnitSpec {
 
     "written to JSON" should {
       "produce the expected JsObject" in {
-        Json.toJson(responseModel) shouldBe mtdResponseJson
+        Json.toJson(mtdResponseModel) shouldBe mtdResponseJson
       }
     }
   }

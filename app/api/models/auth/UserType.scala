@@ -16,18 +16,14 @@
 
 package api.models.auth
 
-import play.api.libs.json.{JsString, Writes}
+import api.utils.enums.Enums
+import play.api.libs.json.Writes
 
 enum UserType:
-  case Individual, Organisation, Agent, SupportingAgent
+  case Individual, Organisation, Agent, `Supporting Agent`
 
 object UserType {
 
-  implicit val writes: Writes[UserType] = Writes {
-    case Individual      => JsString("Individual")
-    case Organisation    => JsString("Organisation")
-    case Agent           => JsString("Agent")
-    case SupportingAgent => JsString("Supporting Agent")
-  }
+  implicit val writes: Writes[UserType] = Enums.writes[UserType]
 
 }

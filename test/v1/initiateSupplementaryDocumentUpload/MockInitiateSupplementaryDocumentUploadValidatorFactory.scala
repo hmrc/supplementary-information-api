@@ -17,6 +17,7 @@
 package v1.initiateSupplementaryDocumentUpload
 
 import api.controllers.validators.{MockValidatorFactory, Validator}
+import api.models.auth.UserType
 import org.scalamock.handlers.CallHandler
 import play.api.libs.json.JsValue
 import v1.initiateSupplementaryDocumentUpload.model.request.InitiateSupplementaryDocumentUploadRequestData
@@ -27,6 +28,6 @@ trait MockInitiateSupplementaryDocumentUploadValidatorFactory extends MockValida
     mock[InitiateSupplementaryDocumentUploadValidatorFactory]
 
   def validator(): CallHandler[Validator[InitiateSupplementaryDocumentUploadRequestData]] =
-    (mockInitiateSupplementaryDocumentUploadValidatorFactory.validator(_: String, _: String, _: Option[JsValue])).expects(*, *, *)
+    (mockInitiateSupplementaryDocumentUploadValidatorFactory.validator(_: String, _: String, _: UserType, _: Option[JsValue])).expects(*, *, *, *)
 
 }

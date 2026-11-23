@@ -19,7 +19,7 @@ package v1.initiateSupplementaryDocumentUpload
 import api.models.errors.*
 import api.services.{AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.support.IntegrationBaseSpec
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, equalToJson, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -39,11 +39,17 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
 
           DownstreamStub.onSuccess(
             method = DownstreamStub.POST,
-            uri = downstreamUri,
+            uri = upscanUri,
             status = OK,
-            body = downstreamResponseJson
+            body = upscanResponseJson
           )
 
+          DownstreamStub.onSuccess(
+            method = DownstreamStub.POST,
+            uri = metadataUri,
+            queryParams = queryParams,
+            status = CREATED
+          )
         }
 
         val response: WSResponse = await(request().post(mtdRequestBodyJson))
@@ -52,10 +58,10 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
 
         wireMockServer.verify(
           1,
-          postRequestedFor(urlEqualTo(downstreamUri))
+          postRequestedFor(urlEqualTo(upscanUri))
             .withHeader("User-Agent", equalTo("supplementary-information-api"))
             .withHeader("Content-Type", equalTo("application/json"))
-            .withRequestBody(equalToJson(downstreamRequestBodyJson.toString))
+            .withRequestBody(equalToJson(upscanRequestBodyJson.toString))
         )
       }
     }
@@ -110,14 +116,14 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
 
       "a downstream upscan error" which {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"returns $INTERNAL_SERVER_ERROR when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
+          s"returns $expectedStatus when upscan returns $downstreamCode and status $downstreamStatus" in new Test {
             override def setupStubs(): StubMapping = {
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
 
               DownstreamStub.onError(
                 method = DownstreamStub.POST,
-                uri = downstreamUri,
+                uri = upscanUri,
                 errorStatus = downstreamStatus,
                 errorBody = errorBody(downstreamCode)
               )
@@ -132,6 +138,46 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
           (BAD_REQUEST, "Invalid request body", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "Upscan is unavailable", INTERNAL_SERVER_ERROR, InternalError),
           (OK, "{}", INTERNAL_SERVER_ERROR, InternalError)
+        )
+
+        input.foreach(args => serviceErrorTest.tupled(args))
+      }
+
+      "a downstream create metadata record error" which {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"returns $expectedStatus when create metadata record call returns code $downstreamCode and status $downstreamStatus" in new Test {
+            override def setupStubs(): StubMapping = {
+              MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
+
+              DownstreamStub.onSuccess(
+                method = DownstreamStub.POST,
+                uri = upscanUri,
+                status = OK,
+                body = upscanResponseJson
+              )
+
+              DownstreamStub.onError(
+                method = DownstreamStub.POST,
+                uri = metadataUri,
+                queryParams = queryParams,
+                errorStatus = downstreamStatus,
+                errorBody = errorBody(downstreamCode)
+              )
+            }
+
+            val response: WSResponse = await(request().post(mtdRequestBodyJson))
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+
+        val input = List(
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "1289", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1000", INTERNAL_SERVER_ERROR, InternalError)
         )
 
         input.foreach(args => serviceErrorTest.tupled(args))
@@ -168,7 +214,10 @@ class InitiateSupplementaryDocumentUploadControllerISpec extends IntegrationBase
          |]
         """.stripMargin
 
-    def downstreamUri: String = "/upscan/v2/initiate"
+    def upscanUri: String   = "/upscan/v2/initiate"
+    def metadataUri: String = s"/itsd/attachment-metadata/$nino/document-reference"
+
+    val queryParams: Map[String, String] = Map("taxYear" -> "26-27")
 
   }
 

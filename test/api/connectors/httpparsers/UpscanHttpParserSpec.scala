@@ -39,9 +39,9 @@ class UpscanHttpParserSpec extends UnitSpec {
 
   "UpscanHttpParser" should {
     "parse a successful OK JSON response" in {
-      val response = HttpResponse(OK, downstreamResponseJson.toString)
+      val response = HttpResponse(OK, upscanResponseJson.toString)
 
-      httpReads.read(method, url, response) shouldBe Right(ResponseWrapper(correlationId, responseModel))
+      httpReads.read(method, url, response) shouldBe Right(ResponseWrapper(correlationId, mtdResponseModel))
     }
 
     "return an internal error for any error response" when {

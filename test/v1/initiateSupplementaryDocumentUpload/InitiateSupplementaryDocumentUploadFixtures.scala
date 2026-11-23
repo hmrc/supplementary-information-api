@@ -16,10 +16,12 @@
 
 package v1.initiateSupplementaryDocumentUpload
 
+import api.models.auth.UserType
 import api.models.domain.{Nino, TaxYear}
 import play.api.libs.json.{JsObject, Json}
 import v1.initiateSupplementaryDocumentUpload.model.*
 import v1.initiateSupplementaryDocumentUpload.model.request.{
+  CreateSkeletalMetadataRecordRequest,
   InitiateSupplementaryDocumentUploadRequestBody,
   InitiateSupplementaryDocumentUploadRequestData,
   UpscanInitiateRequest
@@ -33,14 +35,14 @@ object InitiateSupplementaryDocumentUploadFixtures {
     "errorRedirect"   -> "https://example.com/error"
   )
 
-  val downstreamRequestBodyJson: JsObject = Json.obj(
+  val upscanRequestBodyJson: JsObject = Json.obj(
     "callbackUrl"     -> "https://callback",
     "successRedirect" -> "https://example.com/success",
     "errorRedirect"   -> "https://example.com/error",
     "maximumFileSize" -> 5242880L
   )
 
-  val downstreamResponseJson: JsObject = Json.obj(
+  val upscanResponseJson: JsObject = Json.obj(
     "reference" -> "document-reference",
     "uploadRequest" -> Json.obj(
       "href" -> "https://example.com/upload",
@@ -62,17 +64,18 @@ object InitiateSupplementaryDocumentUploadFixtures {
     )
   )
 
-  val requestBodyModel: InitiateSupplementaryDocumentUploadRequestBody =
+  val mtdRequestBodyModel: InitiateSupplementaryDocumentUploadRequestBody =
     InitiateSupplementaryDocumentUploadRequestBody(
       successRedirect = Some("https://example.com/success"),
       errorRedirect = Some("https://example.com/error")
     )
 
-  val requestDataModel: InitiateSupplementaryDocumentUploadRequestData =
+  val mtdRequestDataModel: InitiateSupplementaryDocumentUploadRequestData =
     InitiateSupplementaryDocumentUploadRequestData(
       nino = Nino("AA123456A"),
       taxYear = TaxYear.fromMtd("2026-27"),
-      body = Some(requestBodyModel)
+      userType = UserType.Individual,
+      body = Some(mtdRequestBodyModel)
     )
 
   val upscanRequestModel: UpscanInitiateRequest =
@@ -83,7 +86,14 @@ object InitiateSupplementaryDocumentUploadFixtures {
       maximumFileSize = 5242880
     )
 
-  val responseModel: InitiateSupplementaryDocumentUploadResponse =
+  val createSkeletalMetadataRecordRequestModel: CreateSkeletalMetadataRecordRequest =
+    CreateSkeletalMetadataRecordRequest(
+      uploadedBy = "individual",
+      uploadTimestamp = "2026-11-18T08:53:14.597Z",
+      status = "requested"
+    )
+
+  val mtdResponseModel: InitiateSupplementaryDocumentUploadResponse =
     InitiateSupplementaryDocumentUploadResponse(
       documentId = "document-reference",
       uploadRequest = UploadRequest(
