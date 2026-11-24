@@ -42,7 +42,7 @@ class UpscanInitiateConnector @Inject() (
     val downstreamUri = UpscanUri[InitiateSupplementaryDocumentUploadResponse]("upscan/v2/initiate")
 
     val upscanRequest = UpscanInitiateRequest(
-      callbackUrl = appConfig.upscanCallbackUrl, // TODO update callback url when available
+      callbackUrl = appConfig.upscanCallbackUrl,
       successRedirect = request.body.flatMap(_.successRedirect),
       errorRedirect = request.body.flatMap(_.errorRedirect),
       maximumFileSize = appConfig.upscanMaxFileSize

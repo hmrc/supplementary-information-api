@@ -18,7 +18,7 @@ package internal.upscanCallback.model
 
 import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
-case class MetadataRecordFailureRequestBody(uploadTimestamp: String, status: String, statusReason: String)
+case class MetadataRecordFailureRequestBody(lastModifiedTimestamp: String, status: String, statusReason: String)
 
 object MetadataRecordFailureRequestBody {
 

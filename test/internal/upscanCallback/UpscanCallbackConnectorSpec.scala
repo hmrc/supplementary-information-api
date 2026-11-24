@@ -44,7 +44,7 @@ class UpscanCallbackConnectorSpec extends ConnectorSpec {
 
         val expectedBody = MetadataRecordSuccessRequestBody(
           scanId = "https://bucketName.s3.eu-west-2.amazonaws.com?1235676",
-          uploadTimestamp = "2026-11-19T14:49:55.260Z",
+          lastModifiedTimestamp = "2026-11-19T14:49:55.260Z",
           fileName = "test.pdf",
           fileSize = 1024,
           status = "requested"
@@ -64,7 +64,7 @@ class UpscanCallbackConnectorSpec extends ConnectorSpec {
         val requestData = UpscanCallbackRequestData(body = failureRequestBody)
 
         val expectedBody = MetadataRecordFailureRequestBody(
-          uploadTimestamp = nowAsUtc(clock),
+          lastModifiedTimestamp = nowAsUtc(clock),
           status = "failed",
           statusReason = "QUARANTINE"
         )
