@@ -42,7 +42,12 @@ class UpscanCallbackConnector @Inject() (val http: HttpClientV2, val appConfig: 
 
     request.body match {
       case successBody: UpscanCallbackSuccessRequestBody => patch(body = toSuccessMetadataRecordBody(successBody), uri = downstreamUri)
-      case failureBody: UpscanCallbackFailureRequestBody => patch(body = toFailureMetadataRecordBody(failureBody), uri = downstreamUri)
+      case failureBody: UpscanCallbackFailureRequestBody =>
+        import failureBody.failureDetails.*
+
+        logger.warn(
+          s"Processing failure notification from Upscan with ID '${request.body.reference}', reason '$failureReason' and message '$message'")
+        patch(body = toFailureMetadataRecordBody(failureBody), uri = downstreamUri)
     }
   }
 
