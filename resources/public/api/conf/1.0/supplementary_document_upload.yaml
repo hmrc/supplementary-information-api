@@ -3,3 +3,9 @@ post:
   security:
     - User-Restricted:
         - write:self-assessment
+
+get:
+  $ref: "./retrieve_supplementary_document_information.yaml"
+  security:
+    - User-Restricted:
+        - read:self-assessment
