@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "documents": {
+      "description": "An array containing all the uploaded supporting documents held against the specified tax year and National Insurance number.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "description": "The unique document identifier.",
+            "example": "11370e18-6e24-453e-b45a-76d3e32ea33d"
+          },
+          "documentName": {
+            "type": "string",
+            "description": "The name of the uploaded document.",
+            "example": "evidence.pdf"
+          },
+          "selected": {
+            "type": "boolean",
+            "description": "The uploaded document status. True means that it is to be included in the tax return.",
+            "example": true
+          },
+          "selectionTimestamp": {
+            "type": "string",
+            "description": "The time the uploaded document was selected to be included in the tax return. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
+            "example": "2026-11-20T10:55:00.000Z"
+          },
+          "status": {
+            "type": "string",
+            "description": "The uploaded document processing status.",
+            "enum": ["requested", "success", "failed"],
+            "example": "success"
+          },
+          "uploadTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when the document upload process started. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
+            "example": "2026-11-20T10:51:59.440Z"
+          },
+          "lastUpdatedTimestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when the document was last updated. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
+            "example": "2026-11-20T10:52:30.000Z"
+          }
+        },
+        "required": ["documentId", "status", "uploadTimestamp", "lastUpdatedTimestamp"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["documents"],
+  "additionalProperties": false
+}

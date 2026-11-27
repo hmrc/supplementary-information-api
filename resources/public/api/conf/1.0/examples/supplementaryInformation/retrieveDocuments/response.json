@@ -1,0 +1,27 @@
+{
+  "documents": [
+    {
+      "documentId": "11370e18-6e24-453e-b45a-76d3e32ea33d",
+      "documentName": "evidence.pdf",
+      "selected": true,
+      "selectionTimestamp": "2026-11-20T10:55:00.000Z",
+      "status": "success",
+      "uploadTimestamp": "2026-11-20T10:51:59.440Z",
+      "lastUpdatedTimestamp": "2026-11-20T10:52:30.000Z"
+    },
+    {
+      "documentId": "22480f29-7f35-564f-c56b-87e4f43fb44e",
+      "documentName": "receipt.png",
+      "status": "failed",
+      "uploadTimestamp": "2026-11-20T11:02:13.100Z",
+      "lastUpdatedTimestamp": "2026-11-20T11:02:40.000Z"
+    },
+    {
+      "documentId": "33591f30-8a46-475a-967c-98f5a54dc55f",
+      "documentName": "supporting-document.pdf",
+      "status": "requested",
+      "uploadTimestamp": "2026-11-20T11:10:00.000Z",
+      "lastUpdatedTimestamp": "2026-11-20T11:10:00.000Z"
+    }
+  ]
+}
