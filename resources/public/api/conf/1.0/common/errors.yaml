@@ -15,6 +15,24 @@ components:
         code: FORMAT_TAX_YEAR
         message: The provided tax year is invalid
 
+    formatDocumentId:
+      description: The format of the supplied document ID is not valid.
+      value:
+        code: FORMAT_DOCUMENT_ID
+        message: The provided document ID is invalid
+
+    formatSelected:
+      description: The format of the supplied selected is not valid.
+      value:
+        code: FORMAT_SELECTED
+        message: The provided selected is invalid
+
+    formatStatus:
+      description: The format of the supplied status is not valid.
+      value:
+        code: FORMAT_STATUS
+        message: The provided status is invalid
+
     ruleIncorrectOrEmptyBody:
       description: An empty or non-matching body was submitted.
       value:

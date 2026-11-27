@@ -94,6 +94,12 @@ responses:
             $ref: './common/errors.yaml#/components/examples/formatNino'
           FORMAT_TAX_YEAR:
             $ref: './common/errors.yaml#/components/examples/formatTaxYear'
+          FORMAT_DOCUMENT_ID:
+            $ref: './common/errors.yaml#/components/examples/formatDocumentId'
+          FORMAT_SELECTED:
+            $ref: './common/errors.yaml#/components/examples/formatSelected'
+          FORMAT_STATUS:
+            $ref: './common/errors.yaml#/components/examples/formatStatus'
           RULE_TAX_YEAR_NOT_SUPPORTED:
             $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotSupported'
           RULE_TAX_YEAR_RANGE_INVALID:
@@ -137,4 +143,7 @@ responses:
           $ref: './schemas/error_response.yaml'
         examples:
           MATCHING_RESOURCE_NOT_FOUND:
-            $ref: './common/errors.yaml#/components/examples/notFound'
+            description: The supplied income source could not be found.
+            value:
+              code: MATCHING_RESOURCE_NOT_FOUND
+              message: Matching resource not found

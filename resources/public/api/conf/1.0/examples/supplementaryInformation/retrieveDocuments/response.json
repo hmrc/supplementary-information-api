@@ -15,6 +15,13 @@
       "status": "failed",
       "uploadTimestamp": "2026-11-20T11:02:13.100Z",
       "lastUpdatedTimestamp": "2026-11-20T11:02:40.000Z"
+    },
+    {
+      "documentId": "33591f30-8a46-475a-967c-98f5a54dc55f",
+      "documentName": "supporting-document.pdf",
+      "status": "requested",
+      "uploadTimestamp": "2026-11-20T11:10:00.000Z",
+      "lastUpdatedTimestamp": "2026-11-20T11:10:00.000Z"
     }
   ]
 }
