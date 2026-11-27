@@ -88,3 +88,9 @@ object FormatSupplementaryInformationError
       "The provided supplementaryInformation is invalid",
       BAD_REQUEST,
       Some(List("/supplementaryInformation")))
+
+object DocumentIdFormatError extends MtdError("FORMAT_DOCUMENT_ID", "The provided document ID is invalid", BAD_REQUEST)
+
+object SelectedFormatError extends MtdError("FORMAT_SELECTED", "The provided selected value is invalid", BAD_REQUEST)
+
+object StatusFormatError extends MtdError("FORMAT_STATUS", "The provided status is invalid", BAD_REQUEST)
